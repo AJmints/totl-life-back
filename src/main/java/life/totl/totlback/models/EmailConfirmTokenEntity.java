@@ -32,7 +32,7 @@ public class EmailConfirmTokenEntity {
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
         cal.setTime(new Timestamp(cal.getTime().getTime()));
-        cal.add(Calendar.MINUTE, 20);
+        cal.add(Calendar.MINUTE, 120);
         return new java.sql.Date(cal.getTime().getTime());
     }
 

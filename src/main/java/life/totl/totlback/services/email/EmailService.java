@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Optional;
 
-@Service(value = "emailService")
+@Service(value = "emailHelper")
 public class EmailService {
 
-    private JavaMailSender javaMailSender;
-    private EmailConfirmTokenRepository emailConfirmTokenRepository;
-    private UserEntityRepository userEntityRepository;
+    private final JavaMailSender javaMailSender;
+    private final EmailConfirmTokenRepository emailConfirmTokenRepository;
+    private final UserEntityRepository userEntityRepository;
 
     @Autowired
     public EmailService(JavaMailSender javaMailSender,EmailConfirmTokenRepository emailConfirmTokenRepository, UserEntityRepository userEntityRepository) {
@@ -31,23 +31,31 @@ public class EmailService {
         javaMailSender.send(email);
     }
 
+
     public String confirmEmail(String confirmationToken) {
 
-        if (emailConfirmTokenRepository.existsByConfirmationToken(confirmationToken)) {
+        Optional<EmailConfirmTokenEntity> token = Optional.ofNullable(emailConfirmTokenRepository.findByConfirmationToken(confirmationToken));
+
+        if (token.isEmpty()) {
             return "Error: Token does not exist";
         }
 
-        EmailConfirmTokenEntity token = emailConfirmTokenRepository.findByConfirmationToken(confirmationToken);
-        Date currentDate = new Date();
-
-        if (token.getExpiryDate().before(currentDate)) {
+        if (token.get().getExpiryDate().before(new Date())) {
             return "Email link has expired, please request a new link and try again.";
         } else {
-            Optional<UserEntity> user = userEntityRepository.findById(token.getUserId());
+            Optional<UserEntity> user = userEntityRepository.findById(token.get().getUserId());
             if (user.isPresent()) {
+                if (user.get().isAccountVerified()) {
+                    return "You're account is already verified";
+                }
+
                 user.get().setAccountVerified(true);
                 userEntityRepository.save(user.get());
+                /** TODO: Set up proper way to delete old confirmation tokens from repository
+                 * this approach causes and error **/
+//                emailConfirmTokenRepository.delete(token.get());
                 return "Email verified successfully!";
+
             } else {
                 return "Error: Something went wrong, couldn't verify email.";
             }
