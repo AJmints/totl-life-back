@@ -1,10 +1,11 @@
-package life.totl.totlback.models;
+package life.totl.totlback.users.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,11 @@ public class UserEntity {
 
     private List<String> roles = new ArrayList<>();
 
-    public UserEntity(String userName, String userEmail, String pwHash, boolean accountVerified, List<String> roles) {
+    public UserEntity(String userName, String userEmail, String pwHash, boolean accountVerified) {
         this.userName = userName;
         this.userEmail = userEmail;
-        this.pwHash = pwHash;
+        this.pwHash = encoder.encode(pwHash);
         this.accountVerified = accountVerified;
-        this.roles = roles;
     }
 
     public UserEntity() {
@@ -87,4 +87,10 @@ public class UserEntity {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+
+    public boolean isMatchingPassword(String password) {
+        return encoder.matches(password, pwHash);
+    }
+
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 }

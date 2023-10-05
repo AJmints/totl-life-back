@@ -1,4 +1,4 @@
-package life.totl.totlback.models.dtos;
+package life.totl.totlback.users.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

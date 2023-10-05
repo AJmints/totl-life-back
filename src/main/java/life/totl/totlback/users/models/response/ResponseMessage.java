@@ -1,4 +1,4 @@
-package life.totl.totlback.models.response;
+package life.totl.totlback.users.models.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

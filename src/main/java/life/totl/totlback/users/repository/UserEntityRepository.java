@@ -1,6 +1,6 @@
-package life.totl.totlback.repository;
+package life.totl.totlback.users.repository;
 
-import life.totl.totlback.models.UserEntity;
+import life.totl.totlback.users.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {

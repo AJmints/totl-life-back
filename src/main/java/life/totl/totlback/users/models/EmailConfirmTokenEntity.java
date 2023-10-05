@@ -1,4 +1,4 @@
-package life.totl.totlback.models;
+package life.totl.totlback.users.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

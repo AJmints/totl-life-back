@@ -1,9 +1,9 @@
-package life.totl.totlback.services.email;
+package life.totl.totlback.users.services.email;
 
-import life.totl.totlback.models.EmailConfirmTokenEntity;
-import life.totl.totlback.models.UserEntity;
-import life.totl.totlback.repository.EmailConfirmTokenRepository;
-import life.totl.totlback.repository.UserEntityRepository;
+import life.totl.totlback.users.models.EmailConfirmTokenEntity;
+import life.totl.totlback.users.models.UserEntity;
+import life.totl.totlback.users.repository.EmailConfirmTokenRepository;
+import life.totl.totlback.users.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

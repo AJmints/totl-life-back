@@ -1,6 +1,6 @@
-package life.totl.totlback.repository;
+package life.totl.totlback.users.repository;
 
-import life.totl.totlback.models.EmailConfirmTokenEntity;
+import life.totl.totlback.users.models.EmailConfirmTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
