@@ -153,7 +153,6 @@ public class AuthenticationController {
             }
         }
 
-
         if (userEntity.isPresent()) {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
