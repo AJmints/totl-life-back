@@ -88,6 +88,8 @@ public class UserEntity {
         this.roles = roles;
     }
 
+    public String getIdString() { return String.valueOf(this.id); }
+
     public boolean isMatchingPassword(String password) {
         return encoder.matches(password, pwHash);
     }

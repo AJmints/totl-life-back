@@ -4,6 +4,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import life.totl.totlback.security.utils.TotlSecurityProperties;
+import life.totl.totlback.users.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,8 @@ import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 @Component
@@ -18,16 +21,26 @@ public class JWTGenerator {
 
     @Autowired
     TotlSecurityProperties environment;
+    @Autowired
+    UserEntityRepository userEntityRepository;
 
     public String generateToken(Authentication authentication) {
         String userName = authentication.getName();
+
         return Jwts.builder()
-                .setSubject(userName)
-                .claim("roles", authentication.getAuthorities().toString())
+                .setSubject(userEntityRepository.findByUserName(userName).getIdString())
+                .claim("roles", authentication.getAuthorities())
                 .setIssuedAt(new Date())
-                // set expiration date
+                .setExpiration(calculateExpiryDate())
                 .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private Date calculateExpiryDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Timestamp(cal.getTime().getTime()));
+        cal.add(Calendar.MINUTE, 360); // 6 hours
+        return new Date(cal.getTime().getTime());
     }
 
     public Key key() {

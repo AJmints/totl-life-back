@@ -1,4 +1,4 @@
-package life.totl.totlback.security.utils.jwt;
+package life.totl.totlback.security.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
