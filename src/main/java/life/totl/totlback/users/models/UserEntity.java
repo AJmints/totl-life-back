@@ -5,10 +5,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -33,12 +35,18 @@ public class UserEntity {
     private boolean accountVerified;
 
     private List<String> roles = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_logs_connection",
+    joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "logs_bales_id", referencedColumnName = "id"))
+    private UserLogsBalesEntity userLogsBalesEntity;
 
     public UserEntity(String userName, String userEmail, String pwHash, boolean accountVerified) {
         this.userName = userName;
         this.userEmail = userEmail;
         this.pwHash = encoder.encode(pwHash);
         this.accountVerified = accountVerified;
+        this.userLogsBalesEntity = new UserLogsBalesEntity(this);
     }
 
     public UserEntity() {
@@ -50,6 +58,14 @@ public class UserEntity {
 
     public String getUserName() {
         return userName;
+    }
+
+    public void setUserLogsBalesEntity(UserLogsBalesEntity userLogsBalesEntity) {
+        this.userLogsBalesEntity = userLogsBalesEntity;
+    }
+
+    public UserLogsBalesEntity getUserLogsBalesEntity() {
+        return userLogsBalesEntity;
     }
 
     public void setUserName(String userName) {

@@ -1,10 +1,10 @@
-package life.totl.totlback.forums.models;
+package life.totl.totlback.logs.models;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "logs")
-public class LogsEntity {
+@Table(name = "comment")
+public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

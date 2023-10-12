@@ -1,5 +1,8 @@
 package life.totl.totlback.users.controllers;
 
+import life.totl.totlback.logs.models.LogsEntity;
+import life.totl.totlback.logs.models.UserLogsBalesEntity;
+import life.totl.totlback.logs.repositories.UserLogsBalesEntityRepository;
 import life.totl.totlback.security.payload.response.JWTResponse;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.EmailConfirmTokenEntity;
@@ -33,17 +36,20 @@ public class AuthenticationController {
     private final TotlUserProperties totlUserProperties;
     private final UserEntityRepository userEntityRepository;
     private final EmailConfirmTokenRepository emailConfirmTokenRepository;
+    private final UserLogsBalesEntityRepository userLogsBalesEntityRepository;
     private final EmailService emailService;
     private final JWTGenerator jwtGenerator;
     private final AuthenticationManager authenticationManager;
+
     private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    private AuthenticationController(TotlUserProperties totlUserProperties, UserEntityRepository userEntityRepository, EmailConfirmTokenRepository emailConfirmTokenRepository, EmailService emailService, JWTGenerator jwtGenerator, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    private AuthenticationController(TotlUserProperties totlUserProperties, UserEntityRepository userEntityRepository, EmailConfirmTokenRepository emailConfirmTokenRepository, EmailService emailService, JWTGenerator jwtGenerator, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserLogsBalesEntityRepository userLogsBalesEntityRepository) {
         this.totlUserProperties = totlUserProperties;
         this.userEntityRepository = userEntityRepository;
         this.emailConfirmTokenRepository = emailConfirmTokenRepository;
+        this.userLogsBalesEntityRepository = userLogsBalesEntityRepository;
         this.emailService = emailService;
         this.jwtGenerator = jwtGenerator;
         this.authenticationManager = authenticationManager;
@@ -83,9 +89,9 @@ public class AuthenticationController {
         mailMessage.setText("Hello, " + user.getUserName() + "\n\nThank you for joining TOTL.life! Please follow the link to verify your account so you can enjoy everything TOTL.life has to offer! Link is valid for 2 hours.\n\n" + totlUserProperties.getHostUrl() + "/register/confirm/" + confirmationToken.getConfirmationToken());
 
         emailService.sendEmail(mailMessage);
+        ResponseMessage response = new ResponseMessage("You have successfully registered! Check your email to complete your verification.");
 
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping(value = "/confirm")

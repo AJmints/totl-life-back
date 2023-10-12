@@ -4,6 +4,7 @@ import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.models.response.ResponseMessage;
+import life.totl.totlback.users.models.response.UserProfileInfo;
 import life.totl.totlback.users.repository.ProfilePictureRepository;
 import life.totl.totlback.users.repository.UserEntityRepository;
 import life.totl.totlback.users.utils.ImageUtility;
@@ -55,8 +56,8 @@ public class UserProfileController {
     public ResponseEntity<?> getUserPFP(@PathVariable("userId") String userId) throws IOException {
         Optional<UserEntity> user = userEntityRepository.findById(Long.valueOf(userId));
         Optional<ProfilePictureEntity> dbImage = profilePictureRepository.findByUserId(userId);
-        if (user.isEmpty() || dbImage.isEmpty()) {
-            ResponseMessage responseMessage = new ResponseMessage(null);
+        if (dbImage.isEmpty()) {
+            UserProfileInfo responseMessage = new UserProfileInfo(null, user.get().getUserName());
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
         return ResponseEntity.status(HttpStatus.OK).body(ProfilePictureEntity.builder().id(dbImage.get().getId()).userId(user.get().getUserName()).type(dbImage.get().getType()).image(ImageUtility.decompressImage(dbImage.get().getImage())).build());
