@@ -10,8 +10,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "user_logs_bales") // rename logs_bales_by_user
-@Getter
-@Setter
 public class UserLogsBalesEntity{
 
     @Id
@@ -30,11 +28,16 @@ public class UserLogsBalesEntity{
     public UserLogsBalesEntity() {
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public List<LogsEntity> getLogsEntities() {
+        return logsEntities;
+    }
+
     public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
 }
