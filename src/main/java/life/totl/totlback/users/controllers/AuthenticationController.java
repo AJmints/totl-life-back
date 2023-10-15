@@ -1,7 +1,5 @@
 package life.totl.totlback.users.controllers;
 
-import life.totl.totlback.logs.models.LogsEntity;
-import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import life.totl.totlback.logs.repositories.UserLogsBalesEntityRepository;
 import life.totl.totlback.security.payload.response.JWTResponse;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;

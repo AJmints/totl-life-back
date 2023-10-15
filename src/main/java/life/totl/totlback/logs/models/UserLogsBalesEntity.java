@@ -18,8 +18,11 @@ public class UserLogsBalesEntity{
     @OneToOne(mappedBy = "userLogsBalesEntity")
     private UserEntity user;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "logOwner")
-    private List<LogsEntity> logsEntities = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "logOwner")
+    private final List<LogsEntity> logsEntities = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "baleOwner")
+    private final List<BalesEntity> baleEntities = new ArrayList<>();
 
     public UserLogsBalesEntity(UserEntity user) {
         this.user = user;
@@ -40,4 +43,7 @@ public class UserLogsBalesEntity{
         return user;
     }
 
+    public List<BalesEntity> getBaleEntities() {
+        return baleEntities;
+    }
 }
