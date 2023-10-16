@@ -6,6 +6,8 @@ import life.totl.totlback.logs.models.dto.BaleDTO;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.utils.ImageUtility;
 
+import java.util.List;
+
 @Entity
 @Table(name = "bale_forum_post")
 public class BalesEntity {
@@ -22,8 +24,9 @@ public class BalesEntity {
     private UserLogsBalesEntity baleOwner;
 //    private Long upVoteCount;
 //    private Long downVoteCount;
-//    private CommentEntity comments;
-    @Column(columnDefinition = "VARCHAR(1500) NOT NULL")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "parentBale")
+    private List<CommentEntity> comments;
+    @Column(columnDefinition = "VARCHAR(1000) NOT NULL")
     private String title;
     @Column(name = "bale_body", columnDefinition = "VARCHAR(2300) NOT NULL")
     private String body;

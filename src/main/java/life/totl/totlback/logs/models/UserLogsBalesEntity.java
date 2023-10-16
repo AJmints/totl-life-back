@@ -22,6 +22,9 @@ public class UserLogsBalesEntity{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "baleOwner")
     private final List<BalesEntity> baleEntities = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "commentOwner")
+    private final List<CommentEntity> commentEntities = new ArrayList<>();
+
     public UserLogsBalesEntity(UserEntity user) {
         this.user = user;
     }
