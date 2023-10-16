@@ -2,14 +2,12 @@ package life.totl.totlback.logs.models;
 
 import jakarta.persistence.*;
 import life.totl.totlback.users.models.UserEntity;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_logs_bales") // rename logs_bales_by_user
+@Table(name = "logs_bales_by_user")
 public class UserLogsBalesEntity{
 
     @Id

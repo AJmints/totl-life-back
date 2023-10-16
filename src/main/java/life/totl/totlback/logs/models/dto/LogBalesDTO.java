@@ -10,5 +10,5 @@ import java.util.List;
 @Getter
 public class LogBalesDTO {
     private String status;
-    private List<BalesEntity> allBales;
+    private List<BaleDTO> allBales;
 }

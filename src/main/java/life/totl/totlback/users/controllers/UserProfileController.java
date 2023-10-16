@@ -36,30 +36,25 @@ public class UserProfileController {
     @PostMapping(value = "/upload-pfp")
     public ResponseEntity<?> uploadPFP(@RequestParam("image") MultipartFile file) throws IOException {
 
-        if (profilePictureRepository.findByUserId(file.getOriginalFilename()).isPresent()) {
-            Optional<ProfilePictureEntity> remove = profilePictureRepository.findByUserId(file.getOriginalFilename());
-            remove.ifPresent(profilePictureEntity -> profilePictureRepository.deleteById(profilePictureEntity.getId()));
-        }
+        Optional<ProfilePictureEntity> present = profilePictureRepository.findByUserId(file.getOriginalFilename());
+        present.get().setImage(ImageUtility.compressImage(file.getBytes()));
+        present.get().setType(file.getContentType());
 
-        profilePictureRepository.save(ProfilePictureEntity.builder()
-                .userId(file.getOriginalFilename())
-                .type(file.getContentType())
-                .image(ImageUtility.compressImage(file.getBytes())).build());
-
-        ProfilePictureEntity pic = ProfilePictureEntity.builder().id(1).userId("0").type("image/jpg").image(file.getBytes()).build();
+        profilePictureRepository.save(present.get());
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(pic);
+                .body(present.get());
     }
 
     @GetMapping(path = {"user-pfp/{userId}"})
     public ResponseEntity<?> getUserPFP(@PathVariable("userId") String userId) throws IOException {
+
         Optional<UserEntity> user = userEntityRepository.findById(Long.valueOf(userId));
-        Optional<ProfilePictureEntity> dbImage = profilePictureRepository.findByUserId(userId);
-        if (dbImage.isEmpty()) {
-            UserProfileInfo responseMessage = new UserProfileInfo(null, user.get().getUserName());
-            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(ProfilePictureEntity.builder().id(dbImage.get().getId()).userId(user.get().getUserName()).type(dbImage.get().getType()).image(ImageUtility.decompressImage(dbImage.get().getImage())).build());
+        UserProfileInfo responseMessage;
+        responseMessage = user.map(userEntity -> new UserProfileInfo(
+                ProfilePictureEntity.builder().image(ImageUtility.decompressImage(userEntity.getUserPFP().getImage())).build(), userEntity.getUserName())).orElseGet(() -> new UserProfileInfo(null, "User does not exist"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+
     }
 }

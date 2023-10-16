@@ -2,6 +2,9 @@ package life.totl.totlback.logs.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import life.totl.totlback.logs.models.dto.BaleDTO;
+import life.totl.totlback.users.models.ProfilePictureEntity;
+import life.totl.totlback.users.utils.ImageUtility;
 
 @Entity
 @Table(name = "bale_forum_post")
@@ -17,10 +20,10 @@ public class BalesEntity {
     @JoinColumn(name = "bale_owner", referencedColumnName = "id")
     @JsonIgnore
     private UserLogsBalesEntity baleOwner;
-//    private byte[] userImg;
 //    private Long upVoteCount;
 //    private Long downVoteCount;
-//    private CommentEntity Comments;
+//    private CommentEntity comments;
+    @Column(columnDefinition = "VARCHAR(1500) NOT NULL")
     private String title;
     @Column(name = "bale_body", columnDefinition = "VARCHAR(2300) NOT NULL")
     private String body;
@@ -61,5 +64,24 @@ public class BalesEntity {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public BaleDTO getBaleInformation() {
+
+//        private long id; check
+//        private String parentLog; check
+//        private String userName; check
+//        private byte[] userPFP; check
+//        private String title; check
+//        private String body; check
+//        private long upVoteCount;
+//        private long downVoteCount;
+//        private long commentCount;
+//        private long saveCount;
+
+
+        BaleDTO createDTO = new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage());
+
+        return createDTO;
     }
 }

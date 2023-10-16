@@ -4,12 +4,14 @@ import life.totl.totlback.logs.repositories.UserLogsBalesEntityRepository;
 import life.totl.totlback.security.payload.response.JWTResponse;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.EmailConfirmTokenEntity;
+import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.models.dtos.EmailConfirmationTokenDTO;
 import life.totl.totlback.users.models.dtos.LoginDTO;
 import life.totl.totlback.users.models.response.ResponseMessage;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.models.dtos.UserEntityDTO;
 import life.totl.totlback.users.repository.EmailConfirmTokenRepository;
+import life.totl.totlback.users.repository.ProfilePictureRepository;
 import life.totl.totlback.users.repository.UserEntityRepository;
 import life.totl.totlback.users.services.email.EmailService;
 import life.totl.totlback.users.utils.TotlUserProperties;
@@ -35,6 +37,7 @@ public class AuthenticationController {
     private final UserEntityRepository userEntityRepository;
     private final EmailConfirmTokenRepository emailConfirmTokenRepository;
     private final UserLogsBalesEntityRepository userLogsBalesEntityRepository;
+    private final ProfilePictureRepository profilePictureRepository;
     private final EmailService emailService;
     private final JWTGenerator jwtGenerator;
     private final AuthenticationManager authenticationManager;
@@ -43,11 +46,12 @@ public class AuthenticationController {
 
 
     @Autowired
-    private AuthenticationController(TotlUserProperties totlUserProperties, UserEntityRepository userEntityRepository, EmailConfirmTokenRepository emailConfirmTokenRepository, EmailService emailService, JWTGenerator jwtGenerator, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserLogsBalesEntityRepository userLogsBalesEntityRepository) {
+    private AuthenticationController(TotlUserProperties totlUserProperties, UserEntityRepository userEntityRepository, EmailConfirmTokenRepository emailConfirmTokenRepository, EmailService emailService, JWTGenerator jwtGenerator, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, UserLogsBalesEntityRepository userLogsBalesEntityRepository, ProfilePictureRepository profilePictureRepository) {
         this.totlUserProperties = totlUserProperties;
         this.userEntityRepository = userEntityRepository;
         this.emailConfirmTokenRepository = emailConfirmTokenRepository;
         this.userLogsBalesEntityRepository = userLogsBalesEntityRepository;
+        this.profilePictureRepository = profilePictureRepository;
         this.emailService = emailService;
         this.jwtGenerator = jwtGenerator;
         this.authenticationManager = authenticationManager;
@@ -72,6 +76,7 @@ public class AuthenticationController {
         UserEntity user = new UserEntity(userEntityDTO.getUserName(), userEntityDTO.getUserEmail(), userEntityDTO.getPassword(), false);
         user.setRoles(role);
         userEntityRepository.save(user);
+        user.getUserPFP().setUserId(String.valueOf(user.getId()));
 
         /* Generate confirmation token details */
         EmailConfirmTokenEntity confirmationToken = new EmailConfirmTokenEntity();

@@ -36,11 +36,13 @@ public class UserEntity {
 
     private List<String> roles = new ArrayList<>();
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JoinTable(name = "user_logs_connection",
-//    joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-//    inverseJoinColumns = @JoinColumn(name = "logs_bales_id", referencedColumnName = "id"))
     @JoinColumn(name = "user_forums_ids", referencedColumnName = "id")
     private UserLogsBalesEntity userLogsBalesEntity;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_pfp_id", referencedColumnName = "id")
+    private ProfilePictureEntity userPFP;
+
 
     public UserEntity(String userName, String userEmail, String pwHash, boolean accountVerified) {
         this.userName = userName;
@@ -48,6 +50,7 @@ public class UserEntity {
         this.pwHash = encoder.encode(pwHash);
         this.accountVerified = accountVerified;
         this.userLogsBalesEntity = new UserLogsBalesEntity(this);
+        this.userPFP = new ProfilePictureEntity();
     }
 
     public UserEntity() {
@@ -106,6 +109,14 @@ public class UserEntity {
     }
 
     public String getIdString() { return String.valueOf(this.id); }
+
+    public ProfilePictureEntity getUserPFP() {
+        return userPFP;
+    }
+
+    public void setUserPFP(ProfilePictureEntity userPFP) {
+        this.userPFP = userPFP;
+    }
 
     public boolean isMatchingPassword(String password) {
         return encoder.matches(password, pwHash);

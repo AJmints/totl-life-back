@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class BaleEntityDTO {
+public class CreateBaleEntityDTO {
     private long userId;
     private String parentLog;
     private String title;

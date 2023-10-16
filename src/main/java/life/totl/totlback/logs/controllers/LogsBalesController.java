@@ -3,10 +3,7 @@ package life.totl.totlback.logs.controllers;
 import life.totl.totlback.logs.models.BalesEntity;
 import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
-import life.totl.totlback.logs.models.dto.BaleEntityDTO;
-import life.totl.totlback.logs.models.dto.LogBalesDTO;
-import life.totl.totlback.logs.models.dto.LogNamesDTO;
-import life.totl.totlback.logs.models.dto.LogsEntityDTO;
+import life.totl.totlback.logs.models.dto.*;
 import life.totl.totlback.logs.repositories.BalesEntityRepository;
 import life.totl.totlback.logs.repositories.LogsEntityRepository;
 import life.totl.totlback.logs.repositories.UserLogsBalesEntityRepository;
@@ -57,7 +54,18 @@ public class LogsBalesController {
 
         Optional<LogsEntity> logTarget = logsEntityRepository.findByLogName(log);
         if (logTarget.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success", logTarget.get().getAllLogBales()));
+
+            /** Create a class to hold all necessary information about bales for the front,
+             * Create method inside bale entity to prepare that object
+             * Create a list, store them, then send them up.
+             */
+            List<BaleDTO> allLogBales = new ArrayList<>();
+            for (BalesEntity obj : logTarget.get().getAllLogBales()) {
+                BaleDTO setBale = obj.getBaleInformation();
+                allLogBales.add(setBale);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success", allLogBales));
         }
         ResponseMessage response = new ResponseMessage("Not Found");
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -88,26 +96,38 @@ public class LogsBalesController {
     }
 
     @PostMapping(value = "/create-bale")
-    public ResponseEntity<?> createNewBale(@RequestBody BaleEntityDTO baleEntityDTO, @RequestHeader("auth-token")String token) {
+    public ResponseEntity<?> createNewBale(@RequestBody CreateBaleEntityDTO createBaleEntityDTO, @RequestHeader("auth-token")String token) {
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
             System.out.println("Danger, respond with logout");
         }
 
-        Optional<UserEntity> user = userEntityRepository.findById(baleEntityDTO.getUserId());
+        Optional<UserEntity> user = userEntityRepository.findById(createBaleEntityDTO.getUserId());
         /* Get the record of all logs, bales, and comments created by user */
         Optional<UserLogsBalesEntity> logsBales = userLogsBalesEntityRepository.findById(user.get().getUserLogsBalesEntity().getId());
-        Optional<LogsEntity> logsEntity = logsEntityRepository.findByLogName(baleEntityDTO.getParentLog());
+        Optional<LogsEntity> logsEntity = logsEntityRepository.findByLogName(createBaleEntityDTO.getParentLog());
 
         if (logsBales.isPresent() && logsEntity.isPresent()) {
-            BalesEntity balesEntity = new BalesEntity(logsEntity.get(), logsBales.get(), baleEntityDTO.getTitle(), baleEntityDTO.getBody());
+            BalesEntity balesEntity = new BalesEntity(logsEntity.get(), logsBales.get(), createBaleEntityDTO.getTitle(), createBaleEntityDTO.getBody());
             balesEntityRepository.save(balesEntity);
             logsBales.get().getBaleEntities().add(balesEntity);
             userLogsBalesEntityRepository.save(logsBales.get());
             return ResponseEntity.status(HttpStatus.OK).body(balesEntity);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(baleEntityDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(createBaleEntityDTO);
 
+    }
+
+    // TODO: Make a Get that returns the 10 most recent bales
+    @GetMapping(value = "/most-recent-bales")
+    public ResponseEntity<?> mostRecentBalePosts() {
+        List<BaleDTO> topBales = new ArrayList<>();
+
+        for (BalesEntity bale : balesEntityRepository.findAll()) {
+            BaleDTO baleDTO = new BaleDTO(bale.getId(), bale.getParentLog().getLogName(), bale.getTitle(), bale.getBody(), bale.getBaleOwner().getUser().getUserName(), bale.getBaleInformation().getUserPFP());
+            topBales.add(baleDTO);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(topBales);
     }
 
 }

@@ -1,5 +1,6 @@
 package life.totl.totlback.users.models.response;
 
+import life.totl.totlback.users.models.ProfilePictureEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserProfileInfo {
-    private String pfp;
+    private ProfilePictureEntity pfp;
     private String userName;
 }
