@@ -1,6 +1,5 @@
 package life.totl.totlback.logs.models.dto;
 
-import life.totl.totlback.logs.models.BalesEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,5 +9,6 @@ import java.util.List;
 @Getter
 public class LogBalesDTO {
     private String status;
+    private String logDescription;
     private List<BaleDTO> allBales;
 }

@@ -22,6 +22,11 @@ public class CommentEntity {
     @JsonIgnore
     private BalesEntity parentBale;
 
+    private String comment;
+
+    // private Long upVote;
+    // private Long downVote;
+
     public CommentEntity() {
     }
 }

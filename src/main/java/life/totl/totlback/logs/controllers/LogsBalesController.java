@@ -5,6 +5,7 @@ import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import life.totl.totlback.logs.models.dto.*;
 import life.totl.totlback.logs.repositories.BalesEntityRepository;
+import life.totl.totlback.logs.repositories.CommentEntityRepository;
 import life.totl.totlback.logs.repositories.LogsEntityRepository;
 import life.totl.totlback.logs.repositories.UserLogsBalesEntityRepository;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
@@ -30,14 +31,16 @@ public class LogsBalesController {
     private final UserEntityRepository userEntityRepository;
     private final LogsEntityRepository logsEntityRepository;
     private final BalesEntityRepository balesEntityRepository;
+    private final CommentEntityRepository commentEntityRepository;
 
     @Autowired
-    private LogsBalesController(JWTGenerator jwtGenerator, UserLogsBalesEntityRepository userLogsBalesEntityRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository, BalesEntityRepository balesEntityRepository) {
+    private LogsBalesController(JWTGenerator jwtGenerator, UserLogsBalesEntityRepository userLogsBalesEntityRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository, BalesEntityRepository balesEntityRepository, CommentEntityRepository commentEntityRepository) {
         this.jwtGenerator = jwtGenerator;
         this.userLogsBalesEntityRepository = userLogsBalesEntityRepository;
         this.userEntityRepository = userEntityRepository;
         this.logsEntityRepository = logsEntityRepository;
         this.balesEntityRepository = balesEntityRepository;
+        this.commentEntityRepository = commentEntityRepository;
     }
 
     @GetMapping(value = "/all-logs-for-drop-down")
@@ -65,7 +68,7 @@ public class LogsBalesController {
                 allLogBales.add(setBale);
             }
 
-            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success", allLogBales));
+            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success",logTarget.get().getLogDescription(), allLogBales));
         }
         ResponseMessage response = new ResponseMessage("Not Found");
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -115,6 +118,16 @@ public class LogsBalesController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(createBaleEntityDTO);
+
+    }
+
+    @PostMapping(value = "create-comment")
+    public ResponseEntity<?> createNewComment(@RequestBody CommentDTO commentDTO, @RequestHeader("auth-token")String token) {
+        if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+            System.out.println("Danger, respond with logout");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
 
     }
 
