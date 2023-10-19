@@ -1,6 +1,7 @@
 package life.totl.totlback.logs.controllers;
 
 import life.totl.totlback.logs.models.BalesEntity;
+import life.totl.totlback.logs.models.CommentEntity;
 import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import life.totl.totlback.logs.models.dto.*;
@@ -98,6 +99,12 @@ public class LogsBalesController {
         return ResponseEntity.status(HttpStatus.OK).body(logsEntityDTO);
     }
 
+//    @PostMapping(value = "/like-post")
+//    public ResponseEntity<?> likeAPost(@RequestBody) {
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Yep"));
+//    }
+
     @PostMapping(value = "/create-bale")
     public ResponseEntity<?> createNewBale(@RequestBody CreateBaleEntityDTO createBaleEntityDTO, @RequestHeader("auth-token")String token) {
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
@@ -127,7 +134,35 @@ public class LogsBalesController {
             System.out.println("Danger, respond with logout");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
+        Optional<UserEntity> userPresent = userEntityRepository.findById(commentDTO.getUser());
+        Optional<BalesEntity> balePresent = balesEntityRepository.findById(commentDTO.getBaleId());
+
+        if (userPresent.isPresent() && balePresent.isPresent()) {
+            CommentEntity userComment = new CommentEntity(userPresent.get().getUserLogsBalesEntity(), balePresent.get(), commentDTO.getComment());
+            commentEntityRepository.save(userComment);
+            balePresent.get().getComments().add(userComment);
+
+            CommentResponseDTO response = new CommentResponseDTO(userComment.getId(), commentDTO.getComment(), balePresent.get().getId(), userPresent.get().getUserName(), userPresent.get().getUserPFP().getImage());
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Ooops, something went wrong. Refresh the page and try sending your message again."));
+
+    }
+    @GetMapping(value = "get-bale-comments/{baleId}")
+    public ResponseEntity<?> getBaleComments(@PathVariable("baleId") Long baleId) {
+        Optional<BalesEntity> bale = balesEntityRepository.findById(baleId);
+        List<CommentResponseDTO> response = new ArrayList<>();
+
+        if (bale.isPresent()) {
+            for (CommentEntity comments : commentEntityRepository.findAllByParentBale(bale.get())) {
+                CommentResponseDTO addComment = comments.getCommentInformation();
+                response.add(addComment);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Ooops, something went wrong. Please try again"));
 
     }
 

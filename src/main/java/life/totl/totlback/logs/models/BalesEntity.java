@@ -6,6 +6,7 @@ import life.totl.totlback.logs.models.dto.BaleDTO;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.utils.ImageUtility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,7 @@ public class BalesEntity {
 //    private Long upVoteCount;
 //    private Long downVoteCount;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "parentBale")
-    private List<CommentEntity> comments;
+    private final List<CommentEntity> comments = new ArrayList<>();
     @Column(columnDefinition = "VARCHAR(1000) NOT NULL")
     private String title;
     @Column(name = "bale_body", columnDefinition = "VARCHAR(2300) NOT NULL")
@@ -67,6 +68,10 @@ public class BalesEntity {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public List<CommentEntity> getComments() {
+        return comments;
     }
 
     public BaleDTO getBaleInformation() {
