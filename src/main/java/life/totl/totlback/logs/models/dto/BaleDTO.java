@@ -29,13 +29,14 @@ public class BaleDTO {
     private long commentCount;
     private long saveCount;
 
-    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP) {
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, long commentCount) {
         this.id = id;
         this.parentLog = parentLog;
         this.title = title;
         this.body = body;
         this.userName = userName;
         this.userPFP = userPFP;
+        this.commentCount = commentCount;
     }
 
 }

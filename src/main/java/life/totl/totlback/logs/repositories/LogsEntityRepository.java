@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface LogsEntityRepository extends JpaRepository<LogsEntity, Long> {
 
     Optional<LogsEntity> findByLogName(String logName);
+    Boolean existsByLogName(String logName);
 }

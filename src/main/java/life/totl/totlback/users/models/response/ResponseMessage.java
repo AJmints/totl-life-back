@@ -6,5 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ResponseMessage {
+    private String status;
     private String response;
+    public ResponseMessage(String response) {
+        this.response = response;
+    }
 }

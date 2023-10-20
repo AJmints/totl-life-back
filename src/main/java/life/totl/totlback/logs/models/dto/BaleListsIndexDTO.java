@@ -7,9 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class LogBalesDTO {
-    private String status;
-    private String logDescription;
+public class BaleListsIndexDTO {
     private int total;
-    private List<BaleDTO> allBales;
+    private List<BaleDTO> baleList;
 }

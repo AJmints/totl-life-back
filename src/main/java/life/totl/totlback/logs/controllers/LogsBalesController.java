@@ -53,23 +53,36 @@ public class LogsBalesController {
         return ResponseEntity.status(HttpStatus.OK).body(new LogNamesDTO("success", logNames));
     }
 
-    @GetMapping(value = "/all-bales-in-log/{log}")
-    public ResponseEntity<?> getAllBalesInLog(@PathVariable String log) {
+    @GetMapping(value = "/all-bales-in-log/{log}/{baleIndex}")
+    public ResponseEntity<?> getAllBalesInLog(@PathVariable("log") String log, @PathVariable("baleIndex") int baleIndex) {
 
         Optional<LogsEntity> logTarget = logsEntityRepository.findByLogName(log);
         if (logTarget.isPresent()) {
 
-            /** Create a class to hold all necessary information about bales for the front,
-             * Create method inside bale entity to prepare that object
-             * Create a list, store them, then send them up.
-             */
-            List<BaleDTO> allLogBales = new ArrayList<>();
-            for (BalesEntity obj : logTarget.get().getAllLogBales()) {
-                BaleDTO setBale = obj.getBaleInformation();
-                allLogBales.add(setBale);
+            int indexRange = baleIndex * 10;
+            if (indexRange > logTarget.get().getAllLogBales().size()) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("invalid", "The number used to find the index is invalid, please enter a valid index"));
             }
 
-            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success",logTarget.get().getLogDescription(), allLogBales));
+            List<BaleDTO> topBales = new ArrayList<>();
+            int mostRecent = logTarget.get().getAllLogBales().size() - indexRange;
+            int index = mostRecent;
+
+            if (mostRecent > 10) {
+                for (int i = 0; i < 10; i++) {
+                    BaleDTO send = logTarget.get().getAllLogBales().get(mostRecent - 1).getBaleInformation();
+                    topBales.add(send);
+                    mostRecent--;
+                }
+            } else {
+                for (int i = 0; i < index; i++) {
+                    BaleDTO send = logTarget.get().getAllLogBales().get(mostRecent - 1).getBaleInformation();
+                    topBales.add(send);
+                    mostRecent--;
+                }
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success",logTarget.get().getLogDescription(), logTarget.get().getAllLogBales().size(),topBales));
         }
         ResponseMessage response = new ResponseMessage("Not Found");
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -79,7 +92,11 @@ public class LogsBalesController {
     public ResponseEntity<?> createALog(@RequestBody LogsEntityDTO logsEntityDTO, @RequestHeader("auth-token") String token) {
 
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
-            System.out.println("Danger, respond with logout");
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("bad token", "Danger, respond with logout"));
+        }
+
+        if (logsEntityRepository.existsByLogName(logsEntityDTO.getLogName())) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("taken","That log name is taken, please select a different name"));
         }
 
         /* Get the user who made the post */
@@ -121,7 +138,7 @@ public class LogsBalesController {
             balesEntityRepository.save(balesEntity);
             logsBales.get().getBaleEntities().add(balesEntity);
             userLogsBalesEntityRepository.save(logsBales.get());
-            return ResponseEntity.status(HttpStatus.OK).body(balesEntity);
+            return ResponseEntity.status(HttpStatus.OK).body(balesEntity.getBaleInformation());
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(createBaleEntityDTO);
@@ -167,15 +184,37 @@ public class LogsBalesController {
     }
 
     // TODO: Make a Get that returns the 10 most recent bales
-    @GetMapping(value = "/most-recent-bales")
-    public ResponseEntity<?> mostRecentBalePosts() {
+    @GetMapping(value = "/most-recent-bales/{baleIndex}")
+    public ResponseEntity<?> mostRecentBalePosts(@PathVariable("baleIndex") int baleIndex) {
+        int indexRange = baleIndex * 10;
+
+        if (indexRange > balesEntityRepository.findAll().size()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("invalid", "The number used to find the index is invalid, please enter a valid index"));
+        }
+
         List<BaleDTO> topBales = new ArrayList<>();
 
-        for (BalesEntity bale : balesEntityRepository.findAll()) {
-            BaleDTO baleDTO = new BaleDTO(bale.getId(), bale.getParentLog().getLogName(), bale.getTitle(), bale.getBody(), bale.getBaleOwner().getUser().getUserName(), bale.getBaleInformation().getUserPFP());
-            topBales.add(baleDTO);
+        int mostRecent = balesEntityRepository.findAll().size() - indexRange;
+        int index = mostRecent;
+        if (mostRecent > 10) {
+            for (int i = 0; i < 10; i++) {
+                if (balesEntityRepository.existsById((long) mostRecent)) {
+                    BaleDTO baleDTO = balesEntityRepository.findById((long) mostRecent).get().getBaleInformation();
+                    topBales.add(baleDTO);
+                    mostRecent--;
+                }
+            }
+        } else {
+            for (int i = 0; i < index; i++) {
+                if (balesEntityRepository.existsById((long) mostRecent)) {
+                    BaleDTO baleDTO = balesEntityRepository.findById((long) mostRecent).get().getBaleInformation();
+                    topBales.add(baleDTO);
+                    mostRecent--;
+                }
+            }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(topBales);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new BaleListsIndexDTO(balesEntityRepository.findAll().size(), topBales));
     }
 
 }
