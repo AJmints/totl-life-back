@@ -24,6 +24,7 @@ public class UserLogsBalesEntity{
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "commentOwner")
     private final List<CommentEntity> commentEntities = new ArrayList<>();
+    private final List<Long> logFollow = new ArrayList<>();
 
     public UserLogsBalesEntity(UserEntity user) {
         this.user = user;
@@ -46,5 +47,13 @@ public class UserLogsBalesEntity{
 
     public List<BalesEntity> getBaleEntities() {
         return baleEntities;
+    }
+
+    public List<CommentEntity> getCommentEntities() {
+        return commentEntities;
+    }
+
+    public List<Long> getLogFollow() {
+        return logFollow;
     }
 }

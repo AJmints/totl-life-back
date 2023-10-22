@@ -5,6 +5,7 @@ import life.totl.totlback.logs.models.CommentEntity;
 import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import life.totl.totlback.logs.models.dto.*;
+import life.totl.totlback.logs.models.dto.updownvotebutton.UpDownVoteDTO;
 import life.totl.totlback.logs.repositories.BalesEntityRepository;
 import life.totl.totlback.logs.repositories.CommentEntityRepository;
 import life.totl.totlback.logs.repositories.LogsEntityRepository;
@@ -82,7 +83,7 @@ public class LogsBalesController {
                 }
             }
 
-            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success",logTarget.get().getLogDescription(), logTarget.get().getAllLogBales().size(),topBales));
+            return ResponseEntity.status(HttpStatus.OK).body(new LogBalesDTO("success", logTarget.get().getLogDescription(), logTarget.get().getAllLogBales().size(), topBales));
         }
         ResponseMessage response = new ResponseMessage("Not Found");
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -91,12 +92,13 @@ public class LogsBalesController {
     @PostMapping(value = "/create-log")
     public ResponseEntity<?> createALog(@RequestBody LogsEntityDTO logsEntityDTO, @RequestHeader("auth-token") String token) {
 
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("bad token", "Danger, respond with logout"));
+            /** TODO: Fix by sending logout */
         }
 
         if (logsEntityRepository.existsByLogName(logsEntityDTO.getLogName())) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("taken","That log name is taken, please select a different name"));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("taken", "That log name is taken, please select a different name"));
         }
 
         /* Get the user who made the post */
@@ -116,16 +118,78 @@ public class LogsBalesController {
         return ResponseEntity.status(HttpStatus.OK).body(logsEntityDTO);
     }
 
-//    @PostMapping(value = "/like-post")
-//    public ResponseEntity<?> likeAPost(@RequestBody) {
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Yep"));
-//    }
+    @PostMapping(value = "/downvote-post")
+    public ResponseEntity<?> downVoteAPost(@RequestBody UpDownVoteDTO upDownVoteDTO, @RequestHeader("auth-token") String token) {
+        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
+            System.out.println("Danger, respond with logout");
+            /** TODO: Fix by sending logout action */
+        }
+
+        Optional<BalesEntity> bale = balesEntityRepository.findById(upDownVoteDTO.getBaleId());
+        if (bale.isPresent()) {
+
+            if (bale.get().getDownVoteIds().size() == 0 || !bale.get().getDownVoteIds().contains(upDownVoteDTO.getUserId())) {
+                bale.get().getDownVoteIds().add(upDownVoteDTO.getUserId());
+                balesEntityRepository.save(bale.get());
+
+                if (bale.get().getUpVoteIds().contains(upDownVoteDTO.getUserId())) {
+                    bale.get().getUpVoteIds().remove(upDownVoteDTO.getUserId());
+                    balesEntityRepository.save(bale.get());
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "inc-dec"));
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "inc"));
+
+            } else {
+                bale.get().getDownVoteIds().remove(upDownVoteDTO.getUserId());
+                balesEntityRepository.save(bale.get());
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "dec"));
+            }
+
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "This bale does not exist."));
+    }
+
+
+    @PostMapping(value = "/upvote-post")
+    public ResponseEntity<?> upVoteAPost(@RequestBody UpDownVoteDTO upDownVoteDTO, @RequestHeader("auth-token")String token) {
+        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
+            System.out.println("Danger, respond with logout");
+            /** TODO: Fix by sending logout action */
+        }
+
+        Optional<BalesEntity> bale = balesEntityRepository.findById(upDownVoteDTO.getBaleId());
+        if (bale.isPresent()) {
+
+            if (bale.get().getUpVoteIds().size() == 0 || !bale.get().getUpVoteIds().contains(upDownVoteDTO.getUserId())) {
+                bale.get().getUpVoteIds().add(upDownVoteDTO.getUserId());
+                balesEntityRepository.save(bale.get());
+
+                if (bale.get().getDownVoteIds().contains(upDownVoteDTO.getUserId())) {
+                    bale.get().getDownVoteIds().remove(upDownVoteDTO.getUserId());
+                    balesEntityRepository.save(bale.get());
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "inc-dec"));
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "inc"));
+
+            } else {
+                bale.get().getUpVoteIds().remove(upDownVoteDTO.getUserId());
+                balesEntityRepository.save(bale.get());
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "dec"));
+            }
+
+
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "This bale does not exist."));
+    }
 
     @PostMapping(value = "/create-bale")
     public ResponseEntity<?> createNewBale(@RequestBody CreateBaleEntityDTO createBaleEntityDTO, @RequestHeader("auth-token")String token) {
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
             System.out.println("Danger, respond with logout");
+            /** TODO: Fix by sending logout */
         }
 
         Optional<UserEntity> user = userEntityRepository.findById(createBaleEntityDTO.getUserId());
@@ -134,11 +198,14 @@ public class LogsBalesController {
         Optional<LogsEntity> logsEntity = logsEntityRepository.findByLogName(createBaleEntityDTO.getParentLog());
 
         if (logsBales.isPresent() && logsEntity.isPresent()) {
+
             BalesEntity balesEntity = new BalesEntity(logsEntity.get(), logsBales.get(), createBaleEntityDTO.getTitle(), createBaleEntityDTO.getBody());
             balesEntityRepository.save(balesEntity);
             logsBales.get().getBaleEntities().add(balesEntity);
             userLogsBalesEntityRepository.save(logsBales.get());
-            return ResponseEntity.status(HttpStatus.OK).body(balesEntity.getBaleInformation());
+            BaleDTO response = balesEntity.getBaleInformation();
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(createBaleEntityDTO);
@@ -149,6 +216,7 @@ public class LogsBalesController {
     public ResponseEntity<?> createNewComment(@RequestBody CommentDTO commentDTO, @RequestHeader("auth-token")String token) {
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
             System.out.println("Danger, respond with logout");
+            /** TODO: Fix by sending logout */
         }
 
         Optional<UserEntity> userPresent = userEntityRepository.findById(commentDTO.getUser());
@@ -198,19 +266,15 @@ public class LogsBalesController {
         int index = mostRecent;
         if (mostRecent > 10) {
             for (int i = 0; i < 10; i++) {
-                if (balesEntityRepository.existsById((long) mostRecent)) {
-                    BaleDTO baleDTO = balesEntityRepository.findById((long) mostRecent).get().getBaleInformation();
-                    topBales.add(baleDTO);
-                    mostRecent--;
-                }
+                BaleDTO baleDTO = balesEntityRepository.findAll().get(mostRecent - 1).getBaleInformation();
+                topBales.add(baleDTO);
+                mostRecent--;
             }
         } else {
             for (int i = 0; i < index; i++) {
-                if (balesEntityRepository.existsById((long) mostRecent)) {
-                    BaleDTO baleDTO = balesEntityRepository.findById((long) mostRecent).get().getBaleInformation();
-                    topBales.add(baleDTO);
-                    mostRecent--;
-                }
+                BaleDTO baleDTO = balesEntityRepository.findAll().get(mostRecent - 1).getBaleInformation();
+                topBales.add(baleDTO);
+                mostRecent--;
             }
         }
 

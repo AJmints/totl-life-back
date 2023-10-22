@@ -29,7 +29,7 @@ public class BaleDTO {
     private long commentCount;
     private long saveCount;
 
-    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, long commentCount) {
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, long commentCount, long upVoteCount) {
         this.id = id;
         this.parentLog = parentLog;
         this.title = title;
@@ -37,6 +37,8 @@ public class BaleDTO {
         this.userName = userName;
         this.userPFP = userPFP;
         this.commentCount = commentCount;
+        this.upVoteCount = upVoteCount;
+        // send upvote, downvote, and save to the front, then reset the database. All these fields in previous objects have been set to null, and unless it's a new object with these params, they will break this baleDTO constructor. So we need a clean slate.
     }
 
 }

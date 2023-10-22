@@ -73,7 +73,7 @@ public class AuthenticationController {
         role.add("USER");
 
         /* Create and save new user */
-        UserEntity user = new UserEntity(userEntityDTO.getUserName(), userEntityDTO.getUserEmail(), userEntityDTO.getPassword(), false);
+        UserEntity user = new UserEntity(userEntityDTO.getUserName().toLowerCase(), userEntityDTO.getUserEmail().toLowerCase(), userEntityDTO.getPassword(), false);
         user.setRoles(role);
         userEntityRepository.save(user);
         user.getUserPFP().setUserId(String.valueOf(user.getId()));
