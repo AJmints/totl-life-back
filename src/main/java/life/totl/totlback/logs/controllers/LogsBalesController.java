@@ -185,6 +185,46 @@ public class LogsBalesController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "This bale does not exist."));
     }
 
+    @PostMapping(value = "/add-log-follow")
+    public ResponseEntity<?> addLogToFollow(@RequestBody FollowLogDTO followLogDTO, @RequestHeader("auth-token")String token) {
+        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
+            System.out.println("Danger, respond with logout");
+            /** TODO: Fix by sending logout */
+        }
+        if (!logsEntityRepository.existsByLogName(followLogDTO.getLogName())) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "That log name does not exist."));
+        }
+        UserLogsBalesEntity addLog = userEntityRepository.findById(followLogDTO.getUserId()).get().getUserLogsBalesEntity();
+        if (addLog.getLogFollow().contains(logsEntityRepository.findByLogName(followLogDTO.getLogName()).get().getId())) {
+            addLog.getLogFollow().remove(logsEntityRepository.findByLogName(followLogDTO.getLogName()).get().getId());
+            userLogsBalesEntityRepository.save(addLog);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("unfollow", "You have unfollowed log/" + followLogDTO.getLogName()));
+        }
+
+        addLog.getLogFollow().add(logsEntityRepository.findByLogName(followLogDTO.getLogName()).get().getId());
+        userLogsBalesEntityRepository.save(addLog);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("follow", "You are now following log/" + followLogDTO.getLogName()));
+    }
+
+    @GetMapping(value = "/user-logs/{userId}/{logName}")
+    public ResponseEntity<?> getUserLogs(@PathVariable("userId") long userId, @PathVariable("logName") String logName) {
+        List<String> favLogs = new ArrayList<>();
+        String status = "absent";
+
+        UserLogsBalesEntity user = userEntityRepository.findById(userId).get().getUserLogsBalesEntity();
+        for (Long ids : user.getLogFollow()) {
+            Optional<LogsEntity> log = logsEntityRepository.findById(ids);
+            if (log.isPresent()) {
+                if (log.get().getLogName().equals(logName)) {
+                    status = "present";
+                }
+                favLogs.add(log.get().getLogName());
+            }
+        }
+        LogNamesDTO logNames = new LogNamesDTO(status, favLogs);
+        return ResponseEntity.status(HttpStatus.OK).body(logNames);
+    }
+
     @PostMapping(value = "/create-bale")
     public ResponseEntity<?> createNewBale(@RequestBody CreateBaleEntityDTO createBaleEntityDTO, @RequestHeader("auth-token")String token) {
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
@@ -251,7 +291,6 @@ public class LogsBalesController {
 
     }
 
-    // TODO: Make a Get that returns the 10 most recent bales
     @GetMapping(value = "/most-recent-bales/{baleIndex}")
     public ResponseEntity<?> mostRecentBalePosts(@PathVariable("baleIndex") int baleIndex) {
         int indexRange = baleIndex * 10;
