@@ -8,7 +8,7 @@ group = 'life.totl'
 version = '0.0.1-SNAPSHOT'
 
 jar {
-	enabled = false
+	enabled = true
 }
 
 java {
