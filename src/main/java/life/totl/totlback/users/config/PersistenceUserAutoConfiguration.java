@@ -13,19 +13,19 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
 
-@Configuration
-@PropertySource({"classpath:application.properties"})
-@EnableJpaRepositories(
-//        entityManagerFactoryRef = "entityManagerFactory",
-//        transactionManagerRef = "userTransactionManager",
-        basePackages = "life.totl.totlback.users.repository")
+//@Configuration
+//@PropertySource({"classpath:application.properties"})
+//@EnableJpaRepositories(
+////        entityManagerFactoryRef = "entityManagerFactory",
+////        transactionManagerRef = "userTransactionManager",
+//        basePackages = "life.totl.totlback.users.repository")
 public class PersistenceUserAutoConfiguration {
 
-    @Primary
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource userEntityDataSource() {
-        return DataSourceBuilder.create().build();
-    }
+//    @Primary
+//    @Bean
+//    @ConfigurationProperties(prefix = "spring.datasource")
+//    public DataSource userEntityDataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
 
 }
