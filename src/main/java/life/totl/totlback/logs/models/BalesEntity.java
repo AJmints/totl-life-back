@@ -3,6 +3,7 @@ package life.totl.totlback.logs.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import life.totl.totlback.logs.models.dto.BaleDTO;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.utils.ImageUtility;
@@ -25,13 +26,13 @@ public class BalesEntity implements Serializable {
     @JoinColumn(name = "bale_owner", referencedColumnName = "id")
     @JsonIgnore
     private UserLogsBalesEntity baleOwner;
-
-//    private Long downVoteCount;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "parentBale")
     private final List<CommentEntity> comments = new ArrayList<>();
     @Column(columnDefinition = "VARCHAR(1000) NOT NULL")
+    @Size(min = 10, max = 150)
     private String title;
     @Column(name = "bale_body", columnDefinition = "VARCHAR(2300) NOT NULL")
+    @Size(min = 10, max = 600)
     private String body;
     @Column(name = "up_vote")
     private final List<Long> upVoteIds = new ArrayList<>();
@@ -91,21 +92,6 @@ public class BalesEntity implements Serializable {
 
 
     public BaleDTO getBaleInformation() {
-
-//        private long id; check
-//        private String parentLog; check
-//        private String userName; check
-//        private byte[] userPFP; check
-//        private String title; check
-//        private String body; check
-//        private long upVoteCount;
-//        private long downVoteCount;
-//        private long commentCount; check
-//        private long saveCount;
-
-
-        BaleDTO createDTO = new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size());
-
-        return createDTO;
+        return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size());
     }
 }

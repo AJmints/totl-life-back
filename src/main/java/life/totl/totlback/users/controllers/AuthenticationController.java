@@ -92,7 +92,7 @@ public class AuthenticationController {
         mailMessage.setText("Hello, " + user.getUserName() + "\n\nThank you for joining TOTL.life! Please follow the link to verify your account so you can enjoy everything TOTL.life has to offer! Link is valid for 2 hours.\n\n" + totlUserProperties.getHostUrl() + "/register/confirm/" + confirmationToken.getConfirmationToken());
 
         emailService.sendEmail(mailMessage);
-        ResponseMessage response = new ResponseMessage("You have successfully registered! Check your email to complete your verification.");
+        ResponseMessage response = new ResponseMessage("You have successfully registered! Check your email to complete your verification. If you don't see the email in your primary, check your spam.");
 
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
@@ -157,7 +157,7 @@ public class AuthenticationController {
 
         if (userEntity.isPresent()) {
             if (!userEntity.get().isMatchingPassword(loginDTO.getUserPassword())) {
-                ResponseMessage response = new ResponseMessage("Passwords don't match");
+                ResponseMessage response = new ResponseMessage("failed", "Passwords don't match");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
         }

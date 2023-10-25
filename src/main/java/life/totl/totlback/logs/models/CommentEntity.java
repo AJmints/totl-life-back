@@ -2,6 +2,7 @@ package life.totl.totlback.logs.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import life.totl.totlback.logs.models.dto.CommentDTO;
 import life.totl.totlback.logs.models.dto.CommentResponseDTO;
 import life.totl.totlback.users.models.ProfilePictureEntity;
@@ -28,6 +29,8 @@ public class CommentEntity {
 
 //    private List<ChildCommentEntity> childComments = new ArrayList<>();
 
+    @Size(min = 3, max = 601)
+    @Column(columnDefinition = "VARCHAR(2300) NOT NULL")
     private String comment;
 
     // private Long upVote;

@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HexFormat;
-
 @Entity
 @Data
 @Builder
@@ -21,7 +19,6 @@ public class ProfilePictureEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // TODO: Remove line 21 in future... -Using it in front currently to set userName
     private String userId;
     @OneToOne(mappedBy = "userPFP")
     @JsonIgnore

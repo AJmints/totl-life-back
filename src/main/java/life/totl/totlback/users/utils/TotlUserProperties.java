@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class TotlUserProperties {
 
-    @Value("${HOST_URL}")
+    @Value("${FRONTEND_URL}")
     private String hostUrl;
 
 }

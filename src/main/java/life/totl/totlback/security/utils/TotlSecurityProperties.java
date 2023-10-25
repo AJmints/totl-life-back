@@ -16,4 +16,7 @@ public class TotlSecurityProperties {
     @Value("${JWT_SECRET}")
     private String JWT_SECRET;
 
+    @Value("${FRONTEND_URL}")
+    private String FRONTEND_URL;
+
 }

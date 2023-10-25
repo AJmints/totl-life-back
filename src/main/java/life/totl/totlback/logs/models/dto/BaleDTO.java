@@ -1,12 +1,5 @@
 package life.totl.totlback.logs.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import life.totl.totlback.logs.models.LogsEntity;
-import life.totl.totlback.logs.models.UserLogsBalesEntity;
-import life.totl.totlback.users.models.ProfilePictureEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

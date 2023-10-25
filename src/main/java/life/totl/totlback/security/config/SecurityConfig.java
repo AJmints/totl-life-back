@@ -1,6 +1,7 @@
 package life.totl.totlback.security.config;
 
 import life.totl.totlback.security.config.service.CustomUserDetailsService;
+import life.totl.totlback.security.utils.TotlSecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +27,13 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final JWTAuthEntryPoint authEntryPoint;
+    private final TotlSecurityProperties environment;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTAuthEntryPoint jwtAuthEntryPoint) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTAuthEntryPoint jwtAuthEntryPoint, TotlSecurityProperties environment) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = jwtAuthEntryPoint;
+        this.environment = environment;
     }
 
     @Bean
@@ -62,7 +65,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Collections.singletonList(environment.getFRONTEND_URL()));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
