@@ -25,13 +25,13 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    private CustomUserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
     private final JWTAuthEntryPoint authEntryPoint;
     private final TotlSecurityProperties environment;
 
     @Autowired
-    public SecurityConfig(JWTAuthEntryPoint jwtAuthEntryPoint, TotlSecurityProperties environment) {
-//        this.userDetailsService = userDetailsService;
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTAuthEntryPoint jwtAuthEntryPoint, TotlSecurityProperties environment) {
+        this.userDetailsService = userDetailsService;
         this.authEntryPoint = jwtAuthEntryPoint;
         this.environment = environment;
     }
