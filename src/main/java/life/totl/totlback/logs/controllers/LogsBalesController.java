@@ -103,16 +103,23 @@ public class LogsBalesController {
 
         /* Get the user who made the post */
         Optional<UserEntity> user = userEntityRepository.findById(logsEntityDTO.getUser());
-        /* Get the record of all logs, bales, and comments created by user */
-        Optional<UserLogsBalesEntity> logsBales = userLogsBalesEntityRepository.findById(user.get().getUserLogsBalesEntity().getId());
-        /* Create new Log and assign ownership to the user who sent the details */
-        LogsEntity logsEntity = new LogsEntity(logsBales.get(), logsEntityDTO.getLogName().toLowerCase(), logsEntityDTO.getIntroduction());
-        /* save the new log to the repository */
-        logsEntityRepository.save(logsEntity);
-        /* Add log to users record of logs created by them (This might not be needed) */
-        logsBales.get().getLogsEntities().add(logsEntity);
-        /* Saving the updated log just in case (might not need this) */
-        userLogsBalesEntityRepository.save(logsBales.get());
+
+        if (user.isPresent()) {
+            if (user.get().getUserLogsBalesEntity().getLogsEntities().size() == 3) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("max", "You have created the maximum amount of logs. You're log was not created"));
+            }
+
+            /* Get the record of all logs, bales, and comments created by user */
+            Optional<UserLogsBalesEntity> logsBales = userLogsBalesEntityRepository.findById(user.get().getUserLogsBalesEntity().getId());
+            /* Create new Log and assign ownership to the user who sent the details */
+            LogsEntity logsEntity = new LogsEntity(logsBales.get(), logsEntityDTO.getLogName().toLowerCase(), logsEntityDTO.getIntroduction());
+            /* save the new log to the repository */
+            logsEntityRepository.save(logsEntity);
+            /* Add log to users record of logs created by them (This might not be needed) */
+            logsBales.get().getLogsEntities().add(logsEntity);
+            /* Saving the updated log just in case (might not need this) */
+            userLogsBalesEntityRepository.save(logsBales.get());
+        }
 
 
         return ResponseEntity.status(HttpStatus.OK).body(logsEntityDTO);
