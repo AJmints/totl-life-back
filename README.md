@@ -1,22 +1,17 @@
-# TOTL
+# Totl.Life
 
-Welcome to the TOTL README!
+You are turtle on a river and found a log with other turtles.
 
 ## Welcome to Totl.life
 
 We have some goals and aspirations with this project, but it is first and foremost a project to explore web development, build community, and have fun.
 
-## TechStack
+## Set up
 
--NextJS: --v 13.5.2<br/>
--TypeScript<br/>
--TailWind<br/>
+<h1>Requirements</h1>
 
--Spring Boot<br/>
--Java<br/>
+Node: 18.14.1<br/>
+NPM: 8.19.4<br/>
+Java: 17<br/>
 
--MySQL
-
-Node: 18.14.1
-NPM: 8.19.4
-Java: 17
+npm install
