@@ -8,7 +8,7 @@ We have some goals and aspirations with this project, but it is first and foremo
 
 ## Set up
 
-<h1>Requirements</h1>
+<h3>Requirements</h3>
 
 Node: 18.14.1<br/>
 NPM: 8.19.4<br/>
