@@ -94,7 +94,7 @@ public class LogsBalesController {
 
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("bad token", "Danger, respond with logout"));
-            /** TODO: Fix by sending logout */
+            /** TODO: Fix by sending user to logout */
         }
 
         if (logsEntityRepository.existsByLogName(logsEntityDTO.getLogName())) {
