@@ -57,4 +57,10 @@ public class UserProfileController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
 
     }
+
+    @GetMapping(path = {"userInfo/{userId}"})
+    public ResponseEntity<?> getUserContextInfo(@PathVariable("userId") String userId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(userId);
+    }
 }
