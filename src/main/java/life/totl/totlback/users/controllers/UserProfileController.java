@@ -3,6 +3,7 @@ package life.totl.totlback.users.controllers;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.models.UserEntity;
+import life.totl.totlback.users.models.dtos.UserContextDTO;
 import life.totl.totlback.users.models.response.ResponseMessage;
 import life.totl.totlback.users.models.response.UserProfileInfo;
 import life.totl.totlback.users.repository.ProfilePictureRepository;
@@ -49,6 +50,8 @@ public class UserProfileController {
     @GetMapping(path = {"user-pfp/{userId}"})
     public ResponseEntity<?> getUserPFP(@PathVariable("userId") String userId) throws IOException {
 
+        /* TODO: this route might be shutting down... pending decision, currently not in use. */
+
         Optional<UserEntity> user = userEntityRepository.findById(Long.valueOf(userId));
         UserProfileInfo responseMessage;
         responseMessage = user.map(userEntity -> new UserProfileInfo(
@@ -61,6 +64,15 @@ public class UserProfileController {
     @GetMapping(path = {"userInfo/{userId}"})
     public ResponseEntity<?> getUserContextInfo(@PathVariable("userId") String userId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(userId);
+        Optional<UserEntity> user = userEntityRepository.findById(Long.valueOf(userId));
+
+        if (user.isEmpty()) {
+            ResponseMessage response = new ResponseMessage("failed", "User not present");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        UserContextDTO newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build());
+
+        return ResponseEntity.status(HttpStatus.OK).body(newContext);
     }
 }

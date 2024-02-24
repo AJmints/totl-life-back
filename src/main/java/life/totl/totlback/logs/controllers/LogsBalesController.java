@@ -327,4 +327,12 @@ public class LogsBalesController {
         return ResponseEntity.status(HttpStatus.OK).body(new BaleListsIndexDTO(balesEntityRepository.findAll().size(), topBales));
     }
 
+    @GetMapping(value = "/get-specific-bale/{logName}/{baleId}")
+    public ResponseEntity<?> getSpecificBale(@PathVariable("baleId") long baleId, @PathVariable("logName") String logName) {
+
+        // TODO: Return A specific bale with all the necessary parts for a page view.
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(String.valueOf(baleId), logName));
+    }
+
 }
