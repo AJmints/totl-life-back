@@ -89,9 +89,11 @@ public class BalesEntity implements Serializable {
         return downVoteIds;
     }
 
-
-
     public BaleDTO getBaleInformation() {
         return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size());
+    }
+
+    public BaleDTO getBalePostPageView() {
+        return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.upVoteIds, this.downVoteIds);
     }
 }

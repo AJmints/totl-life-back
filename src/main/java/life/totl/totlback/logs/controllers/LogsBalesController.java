@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -330,9 +331,20 @@ public class LogsBalesController {
     @GetMapping(value = "/get-specific-bale/{logName}/{baleId}")
     public ResponseEntity<?> getSpecificBale(@PathVariable("baleId") long baleId, @PathVariable("logName") String logName) {
 
-        // TODO: Return A specific bale with all the necessary parts for a page view.
+        Optional<BalesEntity> bale = balesEntityRepository.findById(baleId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(String.valueOf(baleId), logName));
+        // Title, body, userName, id, up/down votes, parentLog, userPFP
+
+        if (bale.isPresent()) {
+            if (Objects.equals(bale.get().getId(), baleId) && bale.get().getParentLog().getLogName().equals(logName)) {
+                BaleDTO toReturn = bale.get().getBalePostPageView();
+                return ResponseEntity.status(HttpStatus.OK).body(toReturn);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "You tried visiting an invalid link, please return to the bale and try again."));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "The bale you are trying to view does not exist, please make sure the bale you are trying to view is present."));
     }
 
 }
