@@ -14,6 +14,7 @@ import life.totl.totlback.users.repository.EmailConfirmTokenRepository;
 import life.totl.totlback.users.repository.ProfilePictureRepository;
 import life.totl.totlback.users.repository.UserEntityRepository;
 import life.totl.totlback.users.services.email.EmailService;
+import life.totl.totlback.users.utils.ImageUtility;
 import life.totl.totlback.users.utils.TotlUserProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -170,12 +171,23 @@ public class AuthenticationController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtGenerator.generateToken(authentication);
 
-            JWTResponse response = new JWTResponse(token,
-                    userEntity.get().getId(),
-                    userEntity.get().getUserName(),
-                    userEntity.get().getUserEmail(),
-                    userEntity.get().getRoles(),
-                    userEntity.get().isAccountVerified());
+            JWTResponse response;
+            if (Arrays.equals(userEntity.get().getUserPFP().getImage(), new byte[256])) {
+                response = new JWTResponse(token,
+                        userEntity.get().getId(),
+                        userEntity.get().getUserName(),
+                        userEntity.get().getUserEmail(),
+                        userEntity.get().getRoles(),
+                        userEntity.get().isAccountVerified());
+            } else {
+                response = new JWTResponse(token,
+                        userEntity.get().getId(),
+                        userEntity.get().getUserName(),
+                        userEntity.get().getUserEmail(),
+                        userEntity.get().getRoles(),
+                        ProfilePictureEntity.builder().image(ImageUtility.decompressImage(userEntity.get().getUserPFP().getImage())).build().getImage(),
+                        userEntity.get().isAccountVerified());
+            }
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
