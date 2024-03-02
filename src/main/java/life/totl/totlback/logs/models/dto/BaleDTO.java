@@ -51,4 +51,25 @@ public class BaleDTO {
         this.downVoteIds = downVotes;
     }
 
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, long commentCount, long upVotes, long downVotes) {
+        this.id = id;
+        this.parentLog = parentLog;
+        this.title = title;
+        this.body = body;
+        this.userName = userName;
+        this.commentCount = commentCount;
+        this.upVoteCount = upVotes;
+        this.downVoteCount = downVotes;
+    }
+
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, List<Long> upVotes, List<Long> downVotes) {
+        this.id = id;
+        this.parentLog = parentLog;
+        this.title = title;
+        this.body = body;
+        this.userName = userName;
+        this.upVoteIds = upVotes;
+        this.downVoteIds = downVotes;
+    }
+
 }

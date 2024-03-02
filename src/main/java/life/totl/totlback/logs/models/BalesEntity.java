@@ -10,6 +10,7 @@ import life.totl.totlback.users.utils.ImageUtility;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -90,10 +91,22 @@ public class BalesEntity implements Serializable {
     }
 
     public BaleDTO getBaleInformation() {
-        return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size());
+
+        if (Arrays.equals(this.baleOwner.getUser().getUserPFP().getImage(), new byte[256])) {
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(),this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size());
+        } else {
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size());
+        }
+
     }
 
     public BaleDTO getBalePostPageView() {
-        return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.upVoteIds, this.downVoteIds);
+
+        if (Arrays.equals(this.baleOwner.getUser().getUserPFP().getImage(), new byte[256])) {
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(),this.upVoteIds, this.downVoteIds);
+        } else {
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.upVoteIds, this.downVoteIds);
+        }
+
     }
 }

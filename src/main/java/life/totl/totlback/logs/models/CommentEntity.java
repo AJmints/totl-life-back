@@ -9,6 +9,8 @@ import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.utils.ImageUtility;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Entity
 @Table(name = "comment")
 @Getter
@@ -74,11 +76,21 @@ public class CommentEntity {
     }
 
     public CommentResponseDTO getCommentInformation() {
-        return new CommentResponseDTO(
-                this.getId(),
-                this.getComment(),
-                this.parentBale.getId(),
-                this.getCommentOwner().getUser().getUserName(),
-                ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getCommentOwner().getUser().getUserPFP().getImage())).build().getImage());
+
+        if (Arrays.equals(this.commentOwner.getUser().getUserPFP().getImage(), new byte[256])) {
+            return new CommentResponseDTO(
+                    this.getId(),
+                    this.getComment(),
+                    this.parentBale.getId(),
+                    this.getCommentOwner().getUser().getUserName());
+        } else {
+            return new CommentResponseDTO(
+                    this.getId(),
+                    this.getComment(),
+                    this.parentBale.getId(),
+                    this.getCommentOwner().getUser().getUserName(),
+                    ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getCommentOwner().getUser().getUserPFP().getImage())).build().getImage());
+        }
+
     }
 }
