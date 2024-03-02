@@ -49,6 +49,7 @@ public class UserEntity {
         this.pwHash = encoder.encode(pwHash);
         this.accountVerified = accountVerified;
         this.userLogsBalesEntity = new UserLogsBalesEntity(this);
+        //The way PFP was set up is a flaw that will be rebuilt later or fixed in new version. This is a learning project.
         this.userPFP = new ProfilePictureEntity();
     }
 

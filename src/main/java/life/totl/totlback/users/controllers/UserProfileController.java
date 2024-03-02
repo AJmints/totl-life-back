@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -71,7 +73,13 @@ public class UserProfileController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
-        UserContextDTO newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build());
+        UserContextDTO newContext;
+        if (Arrays.equals(user.get().getUserPFP().getImage(), new byte[256])){
+            newContext = new UserContextDTO(user.get().getUserName(),user.get().getId(),user.get().isAccountVerified());
+        } else {
+            newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build());
+        }
+
 
         return ResponseEntity.status(HttpStatus.OK).body(newContext);
     }

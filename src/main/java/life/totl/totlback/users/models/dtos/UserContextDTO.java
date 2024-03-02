@@ -11,4 +11,10 @@ public class UserContextDTO {
     private Long userId;
     private Boolean accountVerified;
     private ProfilePictureEntity pfp;
+
+    public UserContextDTO (String userName, Long userId, Boolean accountVerified) {
+        this.userName = userName;
+        this.userId = userId;
+        this.accountVerified = accountVerified;
+    }
 }
