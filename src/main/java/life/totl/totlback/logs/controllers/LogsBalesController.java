@@ -260,6 +260,22 @@ public class LogsBalesController {
 
     }
 
+    @DeleteMapping("/deleteBale/{id}")
+    public ResponseEntity<?> deleteThisBale(@PathVariable("id") Long id) {
+
+        // TODO: CREATE THE LOGIC TO DELETE POST AND ALL ITEMS ATTACHED TO IT
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Terminated"));
+    }
+
+    @PutMapping("/editBale/{id}")
+    public ResponseEntity<?> editThisBale(@PathVariable("id") Long id) {
+
+        // TODO: CREATE THE LOGIC TO UPDATE THIS POST
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Updated"));
+    }
+
     @PostMapping(value = "create-comment")
     public ResponseEntity<?> createNewComment(@RequestBody CommentDTO commentDTO, @RequestHeader("auth-token")String token) {
         if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
@@ -332,8 +348,6 @@ public class LogsBalesController {
     public ResponseEntity<?> getSpecificBale(@PathVariable("baleId") long baleId, @PathVariable("logName") String logName) {
 
         Optional<BalesEntity> bale = balesEntityRepository.findById(baleId);
-
-        // Title, body, userName, id, up/down votes, parentLog, userPFP
 
         if (bale.isPresent()) {
             if (Objects.equals(bale.get().getId(), baleId) && bale.get().getParentLog().getLogName().equals(logName)) {
