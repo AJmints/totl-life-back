@@ -40,6 +40,10 @@ public class BalesEntity implements Serializable {
     @Column(name = "down_vote")
     private final List<Long> downVoteIds = new ArrayList<>();
 
+//    @Column(name = "edited")
+//    @NotNull
+//    private boolean edited;  // TODO: set this up by admin panel?
+
     public BalesEntity(LogsEntity parentLog, UserLogsBalesEntity baleOwner, String title, String body) {
         this.parentLog = parentLog;
         this.baleOwner = baleOwner;

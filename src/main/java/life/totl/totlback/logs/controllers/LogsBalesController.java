@@ -92,10 +92,12 @@ public class LogsBalesController {
 
     @PostMapping(value = "/create-log")
     public ResponseEntity<?> createALog(@RequestBody LogsEntityDTO logsEntityDTO, @RequestHeader("auth-token") String token) {
-
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("bad token", "Danger, respond with logout"));
-            /** TODO: Fix by sending user to logout */
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
         if (logsEntityRepository.existsByLogName(logsEntityDTO.getLogName())) {
@@ -128,9 +130,12 @@ public class LogsBalesController {
 
     @PostMapping(value = "/downvote-post")
     public ResponseEntity<?> downVoteAPost(@RequestBody UpDownVoteDTO upDownVoteDTO, @RequestHeader("auth-token") String token) {
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
-            System.out.println("Danger, respond with logout");
-            /** TODO: Fix by sending logout action */
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
         Optional<BalesEntity> bale = balesEntityRepository.findById(upDownVoteDTO.getBaleId());
@@ -162,9 +167,12 @@ public class LogsBalesController {
 
     @PostMapping(value = "/upvote-post")
     public ResponseEntity<?> upVoteAPost(@RequestBody UpDownVoteDTO upDownVoteDTO, @RequestHeader("auth-token")String token) {
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
-            System.out.println("Danger, respond with logout");
-            /** TODO: Fix by sending logout action */
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
         Optional<BalesEntity> bale = balesEntityRepository.findById(upDownVoteDTO.getBaleId());
@@ -195,10 +203,14 @@ public class LogsBalesController {
 
     @PostMapping(value = "/add-log-follow")
     public ResponseEntity<?> addLogToFollow(@RequestBody FollowLogDTO followLogDTO, @RequestHeader("auth-token")String token) {
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
-            System.out.println("Danger, respond with logout");
-            /** TODO: Fix by sending logout */
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
+
         if (!logsEntityRepository.existsByLogName(followLogDTO.getLogName())) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "That log name does not exist."));
         }
@@ -235,9 +247,12 @@ public class LogsBalesController {
 
     @PostMapping(value = "/create-bale")
     public ResponseEntity<?> createNewBale(@RequestBody CreateBaleEntityDTO createBaleEntityDTO, @RequestHeader("auth-token")String token) {
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
-            System.out.println("Danger, respond with logout");
-            /** TODO: Fix by sending logout */
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
         Optional<UserEntity> user = userEntityRepository.findById(createBaleEntityDTO.getUserId());
@@ -269,18 +284,28 @@ public class LogsBalesController {
     }
 
     @PutMapping("/editBale/{id}")
-    public ResponseEntity<?> editThisBale(@PathVariable("id") Long id) {
+    public ResponseEntity<?> editThisBale(@RequestHeader("auth-token") String token, @PathVariable("id") Long id, @RequestBody BaleEditDTO baleEditDTO) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
 
         // TODO: CREATE THE LOGIC TO UPDATE THIS POST
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Updated"));
+        return ResponseEntity.status(HttpStatus.OK).body(baleEditDTO);
     }
 
     @PostMapping(value = "create-comment")
     public ResponseEntity<?> createNewComment(@RequestBody CommentDTO commentDTO, @RequestHeader("auth-token")String token) {
-        if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
-            System.out.println("Danger, respond with logout");
-            /** TODO: Fix by sending logout */
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
         Optional<UserEntity> userPresent = userEntityRepository.findById(commentDTO.getUser());
