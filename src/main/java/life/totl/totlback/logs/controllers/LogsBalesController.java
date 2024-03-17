@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -276,11 +277,27 @@ public class LogsBalesController {
     }
 
     @DeleteMapping("/deleteBale/{id}")
-    public ResponseEntity<?> deleteThisBale(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteThisBale(@PathVariable("id") Long id, @RequestHeader("auth-token") String token) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+
+        Optional<BalesEntity> deleteTarget = balesEntityRepository.findById(id);
+
+        if (deleteTarget.isPresent()) {
+            balesEntityRepository.delete(deleteTarget.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "Terminated"));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "Bale could not be deleted"));
+        }
 
         // TODO: CREATE THE LOGIC TO DELETE POST AND ALL ITEMS ATTACHED TO IT
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Terminated"));
+
     }
 
     @PutMapping("/editBale/{id}")

@@ -37,4 +37,8 @@ public class LogsEntity {
 
     public LogsEntity() {
     }
+
+    public void removeBaleFromLogEntity(BalesEntity remove) {
+        allLogBales.remove(remove);
+    }
 }

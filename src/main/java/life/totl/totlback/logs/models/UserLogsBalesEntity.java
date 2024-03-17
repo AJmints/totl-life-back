@@ -56,4 +56,8 @@ public class UserLogsBalesEntity{
     public List<Long> getLogFollow() {
         return logFollow;
     }
+
+    public void removeBaleFromLogEntity(BalesEntity remove) {
+        baleEntities.remove(remove);
+    }
 }

@@ -8,14 +8,13 @@ import life.totl.totlback.logs.models.dto.BaleDTO;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.utils.ImageUtility;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Entity
 @Table(name = "bale_forum_post")
-public class BalesEntity implements Serializable {
+public class BalesEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -42,7 +41,7 @@ public class BalesEntity implements Serializable {
 
     @Column(name = "edited")
     @NotNull
-    private boolean edited;  // TODO: set this up by admin panel?
+    private boolean edited;
 
     public BalesEntity(LogsEntity parentLog, UserLogsBalesEntity baleOwner, String title, String body) {
         this.parentLog = parentLog;
@@ -120,5 +119,11 @@ public class BalesEntity implements Serializable {
             return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.upVoteIds, this.downVoteIds, this.isEdited());
         }
 
+    }
+
+    @PreRemove
+    private void removeBaleEntityFromParentEntities() {
+        this.parentLog.removeBaleFromLogEntity(this);
+        this.baleOwner.removeBaleFromLogEntity(this);
     }
 }
