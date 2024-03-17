@@ -293,9 +293,17 @@ public class LogsBalesController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
-        // TODO: CREATE THE LOGIC TO UPDATE THIS POST
+        Optional<BalesEntity> updateBale = balesEntityRepository.findById(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(baleEditDTO);
+        if (updateBale.isPresent()) {
+            updateBale.get().setBody(baleEditDTO.getBody());
+            updateBale.get().setTitle(baleEditDTO.getTitle());
+            balesEntityRepository.save(updateBale.get());
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "Bale updated successfully"));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "Unable to update bale at this time."));
+        }
     }
 
     @PostMapping(value = "create-comment")
