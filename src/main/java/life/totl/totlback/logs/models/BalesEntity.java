@@ -40,9 +40,9 @@ public class BalesEntity implements Serializable {
     @Column(name = "down_vote")
     private final List<Long> downVoteIds = new ArrayList<>();
 
-//    @Column(name = "edited")
-//    @NotNull
-//    private boolean edited;  // TODO: set this up by admin panel?
+    @Column(name = "edited")
+    @NotNull
+    private boolean edited;  // TODO: set this up by admin panel?
 
     public BalesEntity(LogsEntity parentLog, UserLogsBalesEntity baleOwner, String title, String body) {
         this.parentLog = parentLog;
@@ -94,12 +94,20 @@ public class BalesEntity implements Serializable {
         return downVoteIds;
     }
 
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public void setEdited(boolean edited) {
+        this.edited = edited;
+    }
+
     public BaleDTO getBaleInformation() {
 
         if (Arrays.equals(this.baleOwner.getUser().getUserPFP().getImage(), new byte[256])) {
-            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(),this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size());
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(),this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size(), this.isEdited());
         } else {
-            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size());
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.getComments().size(), this.getUpVoteIds().size(), this.getDownVoteIds().size(), this.isEdited());
         }
 
     }
@@ -107,9 +115,9 @@ public class BalesEntity implements Serializable {
     public BaleDTO getBalePostPageView() {
 
         if (Arrays.equals(this.baleOwner.getUser().getUserPFP().getImage(), new byte[256])) {
-            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(),this.upVoteIds, this.downVoteIds);
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(),this.upVoteIds, this.downVoteIds, this.edited);
         } else {
-            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.upVoteIds, this.downVoteIds);
+            return new BaleDTO(this.id, this.parentLog.getLogName(), this.title, this.body, baleOwner.getUser().getUserName(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(this.getBaleOwner().getUser().getUserPFP().getImage())).build().getImage(), this.upVoteIds, this.downVoteIds, this.isEdited());
         }
 
     }

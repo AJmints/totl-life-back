@@ -26,8 +26,9 @@ public class BaleDTO {
     private long saveCount;
     private List<Long> upVoteIds = new ArrayList<>();
     private List<Long> downVoteIds = new ArrayList<>();
+    private boolean edited;
 
-    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, long commentCount, long upVoteCount, long downVoteCount) {
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, long commentCount, long upVoteCount, long downVoteCount, boolean edited) {
         this.id = id;
         this.parentLog = parentLog;
         this.title = title;
@@ -37,10 +38,11 @@ public class BaleDTO {
         this.commentCount = commentCount;
         this.upVoteCount = upVoteCount;
         this.downVoteCount = downVoteCount;
-        // send upvote, downvote, and save to the front, then reset the database. All these fields in previous objects have been set to null, and unless it's a new object with these params, they will break this baleDTO constructor. So we need a clean slate.
+        this.edited = edited;
+
     }
 
-    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, List<Long> upVotes, List<Long> downVotes) {
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, byte[] userPFP, List<Long> upVotes, List<Long> downVotes, boolean edited) {
         this.id = id;
         this.parentLog = parentLog;
         this.title = title;
@@ -49,9 +51,10 @@ public class BaleDTO {
         this.userPFP = userPFP;
         this.upVoteIds = upVotes;
         this.downVoteIds = downVotes;
+        this.edited = edited;
     }
 
-    public BaleDTO(long id, String parentLog, String title, String body, String userName, long commentCount, long upVotes, long downVotes) {
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, long commentCount, long upVotes, long downVotes, boolean edited) {
         this.id = id;
         this.parentLog = parentLog;
         this.title = title;
@@ -60,9 +63,10 @@ public class BaleDTO {
         this.commentCount = commentCount;
         this.upVoteCount = upVotes;
         this.downVoteCount = downVotes;
+        this.edited = edited;
     }
 
-    public BaleDTO(long id, String parentLog, String title, String body, String userName, List<Long> upVotes, List<Long> downVotes) {
+    public BaleDTO(long id, String parentLog, String title, String body, String userName, List<Long> upVotes, List<Long> downVotes, boolean edited) {
         this.id = id;
         this.parentLog = parentLog;
         this.title = title;
@@ -70,6 +74,7 @@ public class BaleDTO {
         this.userName = userName;
         this.upVoteIds = upVotes;
         this.downVoteIds = downVotes;
+        this.edited = edited;
     }
 
 }

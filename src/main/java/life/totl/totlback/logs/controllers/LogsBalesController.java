@@ -298,6 +298,11 @@ public class LogsBalesController {
         if (updateBale.isPresent()) {
             updateBale.get().setBody(baleEditDTO.getBody());
             updateBale.get().setTitle(baleEditDTO.getTitle());
+
+            if (!updateBale.get().isEdited()) {
+                updateBale.get().setEdited(true);
+            }
+
             balesEntityRepository.save(updateBale.get());
 
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "Bale updated successfully"));
