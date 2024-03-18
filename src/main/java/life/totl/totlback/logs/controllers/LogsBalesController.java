@@ -14,9 +14,11 @@ import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.models.response.ResponseMessage;
 import life.totl.totlback.users.repository.UserEntityRepository;
+import life.totl.totlback.users.services.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
@@ -36,15 +38,17 @@ public class LogsBalesController {
     private final LogsEntityRepository logsEntityRepository;
     private final BalesEntityRepository balesEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
+    private final EmailService emailService;
 
     @Autowired
-    private LogsBalesController(JWTGenerator jwtGenerator, UserLogsBalesEntityRepository userLogsBalesEntityRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository, BalesEntityRepository balesEntityRepository, CommentEntityRepository commentEntityRepository) {
+    private LogsBalesController(JWTGenerator jwtGenerator, UserLogsBalesEntityRepository userLogsBalesEntityRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository, BalesEntityRepository balesEntityRepository, CommentEntityRepository commentEntityRepository, EmailService emailService) {
         this.jwtGenerator = jwtGenerator;
         this.userLogsBalesEntityRepository = userLogsBalesEntityRepository;
         this.userEntityRepository = userEntityRepository;
         this.logsEntityRepository = logsEntityRepository;
         this.balesEntityRepository = balesEntityRepository;
         this.commentEntityRepository = commentEntityRepository;
+        this.emailService = emailService;
     }
 
     @GetMapping(value = "/all-logs-for-drop-down")
@@ -294,10 +298,6 @@ public class LogsBalesController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "Bale could not be deleted"));
         }
-
-        // TODO: CREATE THE LOGIC TO DELETE POST AND ALL ITEMS ATTACHED TO IT
-
-
     }
 
     @PutMapping("/editBale/{id}")
@@ -416,4 +416,35 @@ public class LogsBalesController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "The bale you are trying to view does not exist, please make sure the bale you are trying to view is present."));
     }
 
+    @PostMapping(value = "/make-report")
+    public ResponseEntity<?> makeReport(@RequestBody ReportDTO reportDTO, @RequestHeader("auth-token")String token) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "User is not logged in."));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+
+        /* Send new Email */
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo("totl.lyfe@gmail.com");
+        mailMessage.setSubject(" User report on Totl.Life");
+        mailMessage.setText("User making the report: " + reportDTO.reportingUser + "\nId being reported: " + reportDTO.reportedId + "\nReported Type: " + reportDTO.type + "\n\nMessage with report:\n" + reportDTO.message);
+
+        try {
+            emailService.sendEmail(mailMessage);
+            ResponseMessage response = new ResponseMessage("success", "Mail sent successfully");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ResponseMessage response = new ResponseMessage("failed", "Something went wrong");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+
+
+
+    }
 }
