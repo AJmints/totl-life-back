@@ -1,5 +1,6 @@
 package life.totl.totlback.users.controllers;
 
+import life.totl.totlback.logs.repositories.LogsEntityRepository;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.models.UserEntity;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowCredentials = "true")
@@ -28,12 +27,14 @@ public class UserProfileController {
     private final JWTGenerator jwtGenerator;
     private final ProfilePictureRepository profilePictureRepository;
     private final UserEntityRepository userEntityRepository;
+    private final LogsEntityRepository logsEntityRepository;
 
     @Autowired
-    private UserProfileController(JWTGenerator jwtGenerator, ProfilePictureRepository profilePictureRepository, UserEntityRepository userEntityRepository) {
+    private UserProfileController(JWTGenerator jwtGenerator, ProfilePictureRepository profilePictureRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository) {
         this.jwtGenerator = jwtGenerator;
         this.profilePictureRepository = profilePictureRepository;
         this.userEntityRepository = userEntityRepository;
+        this.logsEntityRepository = logsEntityRepository;
     }
 
     @PostMapping(value = "/upload-pfp")
@@ -73,11 +74,19 @@ public class UserProfileController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
+        List<String> followingLogs = new ArrayList<>();
+        // TODO: Change how user saves their logs to their profile, this is temp to send log follow list (said Mar, 18, 2024)
+        for (Long id : user.get().getFollowingLogs()) {
+            if (logsEntityRepository.findById(id).isPresent()) {
+                followingLogs.add(logsEntityRepository.findById(id).get().getLogName());
+            }
+        }
+
         UserContextDTO newContext;
         if (Arrays.equals(user.get().getUserPFP().getImage(), new byte[256])){
-            newContext = new UserContextDTO(user.get().getUserName(),user.get().getId(),user.get().isAccountVerified());
+            newContext = new UserContextDTO(user.get().getUserName(),user.get().getId(),user.get().isAccountVerified(), followingLogs, user.get().getUserMadeLogs());
         } else {
-            newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build());
+            newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build(), followingLogs, user.get().getUserMadeLogs());
         }
 
 

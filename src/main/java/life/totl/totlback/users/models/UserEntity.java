@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -123,4 +124,22 @@ public class UserEntity {
     }
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    public List<String> getUserMadeLogs() {
+        List<String> userMadeLogs = new ArrayList<>();
+        for (LogsEntity logs : this.userLogsBalesEntity.getLogsEntities()) {
+            if (logs.getLogOwner().getUser() == this) {
+                userMadeLogs.add(logs.getLogName());
+            }
+        }
+        return userMadeLogs;
+    }
+
+    public List<Long> getFollowingLogs() {
+        List<Long> followingLogs = new ArrayList<>();
+        for (Long logId : this.userLogsBalesEntity.getLogFollow()) {
+            followingLogs.add(logId);
+        }
+        return followingLogs;
+    }
 }

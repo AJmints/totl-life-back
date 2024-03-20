@@ -77,4 +77,10 @@ public class BaleDTO {
         this.edited = edited;
     }
 
+    @AllArgsConstructor
+    @Getter
+    public static class UpDownVoteDTO {
+        private long userId;
+        private long baleId;
+    }
 }
