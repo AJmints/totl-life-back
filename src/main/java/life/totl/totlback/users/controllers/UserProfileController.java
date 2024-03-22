@@ -67,11 +67,25 @@ public class UserProfileController {
     @GetMapping(path = {"userInfo/{userId}"})
     public ResponseEntity<?> getUserContextInfo(@PathVariable("userId") String userId) {
 
-        Optional<UserEntity> user = userEntityRepository.findById(Long.valueOf(userId));
+        Optional<UserEntity> user;
+        try {
 
-        if (user.isEmpty()) {
-            ResponseMessage response = new ResponseMessage("failed", "User not present");
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            user = userEntityRepository.findById(Long.valueOf(userId));
+
+        } catch (NumberFormatException e) {
+            try {
+
+                user = Optional.ofNullable(userEntityRepository.findByUserName(userId));
+
+            } catch (Error err) {
+                ResponseMessage response = new ResponseMessage("failed", "User not present");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            }
+
+            if (user.isEmpty()) {
+                ResponseMessage response = new ResponseMessage("failed", "User not present");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            }
         }
 
         List<String> followingLogs = new ArrayList<>();
