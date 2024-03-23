@@ -158,7 +158,7 @@ public class AuthenticationController {
 
         if (userEntity.isPresent()) {
             if (!userEntity.get().isMatchingPassword(loginDTO.getUserPassword())) {
-                ResponseMessage response = new ResponseMessage("failed", "Passwords don't match");
+                ResponseMessage response = new ResponseMessage("failed", "User name or password don't match.");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
         }

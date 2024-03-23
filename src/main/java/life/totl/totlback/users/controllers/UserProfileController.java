@@ -1,5 +1,7 @@
 package life.totl.totlback.users.controllers;
 
+import life.totl.totlback.backpack.models.BackPackEntity;
+import life.totl.totlback.backpack.repository.BackPackEntityRepository;
 import life.totl.totlback.logs.repositories.LogsEntityRepository;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.ProfilePictureEntity;
@@ -28,13 +30,17 @@ public class UserProfileController {
     private final ProfilePictureRepository profilePictureRepository;
     private final UserEntityRepository userEntityRepository;
     private final LogsEntityRepository logsEntityRepository;
+    private final BackPackEntityRepository backPackEntityRepository;
+
 
     @Autowired
-    private UserProfileController(JWTGenerator jwtGenerator, ProfilePictureRepository profilePictureRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository) {
+    private UserProfileController(JWTGenerator jwtGenerator, ProfilePictureRepository profilePictureRepository, UserEntityRepository userEntityRepository, LogsEntityRepository logsEntityRepository,
+                                  BackPackEntityRepository backPackEntityRepository) {
         this.jwtGenerator = jwtGenerator;
         this.profilePictureRepository = profilePictureRepository;
         this.userEntityRepository = userEntityRepository;
         this.logsEntityRepository = logsEntityRepository;
+        this.backPackEntityRepository = backPackEntityRepository;
     }
 
     @PostMapping(value = "/upload-pfp")
@@ -62,6 +68,45 @@ public class UserProfileController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
 
+    }
+
+    @GetMapping(path = {"checkPack/{userName}"})
+    public ResponseEntity<?> checkUserPack(@PathVariable("userName")String userName) {
+
+        Optional<UserEntity> user = Optional.ofNullable(userEntityRepository.findByUserName(userName));
+        if (user.isPresent()) {
+            if (Objects.equals(user.get().getUserBackPack(), null)) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("none", "No Pack"));
+            } else if (!Objects.equals(user.get().getUserBackPack(), null)) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "pack pack was already made"));
+            }
+        }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "pack pack was not made"));
+
+    }
+
+    @GetMapping(path = {"makePackPack/{userName}"})
+    public ResponseEntity<?> makeUserBackPack(@PathVariable("userName") String userName) {
+
+        Optional<UserEntity> user = Optional.ofNullable(userEntityRepository.findByUserName(userName));
+
+        try {
+            if (user.isPresent()) {
+                if (Objects.equals(user.get().getUserBackPack(), null)) {
+                    user.get().setUserBackPack(new BackPackEntity(user.get()));
+                    userEntityRepository.save(user.get());
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "pack pack made"));
+                } else if (!Objects.equals(user.get().getUserBackPack(), null)) {
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "pack pack was already made"));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "pack pack was not made"));
+            }
+        } catch (NullPointerException e) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", e.getMessage()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "Something went wrong"));
     }
 
     @GetMapping(path = {"userInfo/{userId}"})

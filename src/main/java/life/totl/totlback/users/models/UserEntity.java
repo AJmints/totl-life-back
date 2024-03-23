@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import life.totl.totlback.backpack.models.BackPackEntity;
 import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,6 +44,10 @@ public class UserEntity {
     @JoinColumn(name = "user_pfp_id", referencedColumnName = "id")
     private ProfilePictureEntity userPFP;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_backpack", referencedColumnName = "id")
+    private BackPackEntity userBackPack;
+
 
     public UserEntity(String userName, String userEmail, String pwHash, boolean accountVerified) {
         this.userName = userName;
@@ -52,6 +57,7 @@ public class UserEntity {
         this.userLogsBalesEntity = new UserLogsBalesEntity(this);
         //The way PFP was set up is a flaw that will be rebuilt later or fixed in new version. This is a learning project.
         this.userPFP = new ProfilePictureEntity();
+        this.userBackPack = new BackPackEntity(this);
     }
 
     public UserEntity() {
@@ -117,6 +123,14 @@ public class UserEntity {
 
     public void setUserPFP(ProfilePictureEntity userPFP) {
         this.userPFP = userPFP;
+    }
+
+    public BackPackEntity getUserBackPack() {
+        return userBackPack;
+    }
+
+    public void setUserBackPack(BackPackEntity userBackPack) {
+        this.userBackPack = userBackPack;
     }
 
     public boolean isMatchingPassword(String password) {
