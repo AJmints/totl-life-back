@@ -16,31 +16,8 @@ public class BackPackEntity {
     /** A configuration will be a camping/floating/backpacking version and each will represent the gear for each scenario */
     //private List<BackPackConfiguration> backPackConfig
 
-    /** Lists of owned items by user, can add to various backpack configs */
-    //private List<CookWareItems> CookWare
-
-    //private List<BaseGearItems> BaseGear
-
-    //private List<ClothingGearItems> clothingItems
-
-    //private List<Tools> tools
-
-    //portable battery
-    //solar panels
-    //cooler / portable fridge
-    //tent / hammock
-    //backpack
-    //sleeping bag / sleeping pad
-    //stove
-    //shower
-    //tarp
-    //cookware
-    //water filter
-    //clothing
-    //tools - flashlight / headlamp / knife / axe / saw / cordage / fire starters / shovel
-    //first aide / sanitation
-    //chair / table
-    //games
+    /** This list holds a class that is the GearItem and has user specific notes about the item. This class is made so GearItem can be reused for other users while isolating the user specific details */
+    //private List<GearItem + GearUserNotes = UserGearItem> userGear
 
     public BackPackEntity(UserEntity user) { this.user = user; }
 
