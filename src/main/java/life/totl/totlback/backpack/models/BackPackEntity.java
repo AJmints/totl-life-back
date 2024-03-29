@@ -17,7 +17,8 @@ public class BackPackEntity {
     //private List<BackPackConfiguration> backPackConfig
 
     /** This list holds a class that is the GearItem and has user specific notes about the item. This class is made so GearItem can be reused for other users while isolating the user specific details */
-    //private List<GearItem + GearUserNotes = UserGearItem> userGear
+    /** Experiment with set, it will be faster to iterate through and might benefit loading times. */
+    //private Set<UserSpecificGearEntity> userGear
 
     public BackPackEntity(UserEntity user) { this.user = user; }
 
