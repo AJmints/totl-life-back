@@ -24,11 +24,111 @@ public class GearItemsEntity {
     private double width;
     private double userScore; // scale of 1-5 stars
 
+    public GearItemsEntity() {
+    }
+
     public GearItemsEntity(String category, String type) {
         this.category = category;
         this.type = type;
     }
 
-    public GearItemsEntity() {
+    public GearItemsEntity(String category, String brand, String type, String size) {
+        /** Applies to: Tent, Hammock, sleeping bag, backpack, waterproof dry bag, sleeping bag, clothing, seating */
+        this.category = category;
+        this.brand = brand;
+        this.type = type;
+        this.size = size;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getStorage() {
+        return storage;
+    }
+
+    public void setStorage(String storage) {
+        this.storage = storage;
+    }
+
+    public String getPowerSource() {
+        return powerSource;
+    }
+
+    public void setPowerSource(String powerSource) {
+        this.powerSource = powerSource;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getUserScore() {
+        return userScore;
+    }
+
+    public void setUserScore(double userScore) {
+        this.userScore = userScore;
     }
 }
