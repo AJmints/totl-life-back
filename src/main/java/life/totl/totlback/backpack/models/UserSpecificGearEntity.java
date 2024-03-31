@@ -3,6 +3,8 @@ package life.totl.totlback.backpack.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.Calendar;
+
 @Entity
 @Table(name = "user_specific_gear")
 public class UserSpecificGearEntity {
@@ -21,16 +23,20 @@ public class UserSpecificGearEntity {
     @ManyToOne
     @JoinColumn(name = "config_backpack_items", referencedColumnName = "id")
     private BackPackConfigurationEntity configBackPack;
+    private Calendar dateCreated;
     private String additionalDetails;
     private boolean lendable;
     private int quantity;
     private String itemCondition; //Good / bad / used / rough / broken
+    private boolean forSale;
+    private double price;
     private boolean hidden;
 
     public UserSpecificGearEntity() {
     }
 
-    public UserSpecificGearEntity(GearItemsEntity gearItem, BackPackEntity userBackPack, String additionalDetails, boolean lendable, int quantity, String itemCondition, boolean hidden) {
+    public UserSpecificGearEntity(GearItemsEntity gearItem, BackPackEntity userBackPack, String additionalDetails, boolean lendable, int quantity, String itemCondition, boolean hidden, boolean forSale) {
+        this.dateCreated = Calendar.getInstance();
         this.gearItem = gearItem;
         this.userBackPack = userBackPack;
         this.additionalDetails = additionalDetails;
@@ -38,6 +44,7 @@ public class UserSpecificGearEntity {
         this.quantity = quantity;
         this.itemCondition = itemCondition;
         this.hidden = hidden;
+        this.forSale = forSale;
     }
 
     public long getId() {
@@ -54,6 +61,10 @@ public class UserSpecificGearEntity {
 
     public BackPackConfigurationEntity getConfigBackPack() {
         return configBackPack;
+    }
+
+    public Calendar getDateCreated() {
+        return dateCreated;
     }
 
     public String getAdditionalDetails() {
@@ -94,6 +105,22 @@ public class UserSpecificGearEntity {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public boolean isForSale() {
+        return forSale;
+    }
+
+    public void setForSale(boolean forSale) {
+        this.forSale = forSale;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }
 

@@ -3,6 +3,7 @@ package life.totl.totlback.backpack.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,7 @@ public class BackPackConfigurationEntity {
     private BackPackEntity parentBackPack;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "configBackPack")
     private List<UserSpecificGearEntity> userGear;
+    private Calendar dateCreated;
     private String configType; // hiking pack / car camp pack / float pack
     private String packName;
     private boolean hidden;
@@ -25,7 +27,8 @@ public class BackPackConfigurationEntity {
     public BackPackConfigurationEntity() {
     }
 
-    public BackPackConfigurationEntity(BackPackEntity backPackEntity, String configType, String packName, boolean hidden) {
+    public BackPackConfigurationEntity(BackPackEntity backPackEntity, String configType, String packName) {
+        this.dateCreated = Calendar.getInstance();
         this.parentBackPack = backPackEntity;
         this.configType = configType;
         this.packName = packName;
@@ -42,6 +45,10 @@ public class BackPackConfigurationEntity {
 
     public String getConfigType() {
         return configType;
+    }
+
+    public Calendar getDateCreated() {
+        return dateCreated;
     }
 
     public List<UserSpecificGearEntity> getUserGear() {
@@ -67,4 +74,6 @@ public class BackPackConfigurationEntity {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
+
+
 }

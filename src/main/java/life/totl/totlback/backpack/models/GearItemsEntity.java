@@ -27,17 +27,10 @@ public class GearItemsEntity {
     public GearItemsEntity() {
     }
 
-    public GearItemsEntity(String category, String type) {
-        this.category = category;
-        this.type = type;
-    }
-
-    public GearItemsEntity(String category, String brand, String type, String size) {
-        /** Applies to: Tent, Hammock, sleeping bag, backpack, waterproof dry bag, sleeping bag, clothing, seating */
+    public GearItemsEntity(String category, String brand, String type) {
         this.category = category;
         this.brand = brand;
         this.type = type;
-        this.size = size;
     }
 
     public long getId() {

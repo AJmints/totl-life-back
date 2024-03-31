@@ -1,5 +1,6 @@
 package life.totl.totlback.users.controllers;
 
+import life.totl.totlback.backpack.models.BackPackEntity;
 import life.totl.totlback.logs.repositories.UserLogsBalesEntityRepository;
 import life.totl.totlback.security.payload.response.JWTResponse;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
@@ -187,6 +188,13 @@ public class AuthenticationController {
                         userEntity.get().getRoles(),
                         ProfilePictureEntity.builder().image(ImageUtility.decompressImage(userEntity.get().getUserPFP().getImage())).build().getImage(),
                         userEntity.get().isAccountVerified());
+            }
+
+            /** Temp code to make sure all users have packs when they log in next time. */
+            if (Objects.equals(userEntity.get().getUserBackPack(), null)) {
+                BackPackEntity newPack = new BackPackEntity(userEntity.get());
+                userEntity.get().setUserBackPack(newPack);
+                userEntityRepository.save(userEntity.get());
             }
 
             return new ResponseEntity<>(response, HttpStatus.OK);
