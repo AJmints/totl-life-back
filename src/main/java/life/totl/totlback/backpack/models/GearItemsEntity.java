@@ -14,14 +14,16 @@ public class GearItemsEntity {
     private String category; // tent / hammock / sleeping bag / sleeping pad / fridge / cooler / solar panel / battery / tool / shower / stove / tarp / cookware / water filter / clothing / consumable / seating / hammock / backpack / Water Proof Dry Bag
     private String brand; // Osprey / Kelty / BlackDiamond / Sawyer / Katadyn / AmazonBrand / Coleman / REI / North Face / Solomon / CamelBack /
     private String model; //Specific name of item, optional
-    private String type; // Knife / pot / pan / spoon / Jacket / Pants / Boots / Flashlight / axe / saw / lighter / cordage / chair / table / game / headlamp / fire starter / shovel / first aide / hand sanitation / dish soap / bug spray / sunscreen / games / Water Container
+    private String type; // Knife / pot / pan / spoon / Jacket / Pants / Boots / Flashlight / axe / saw / lighter / cordage / chair / table / game / headlamp / fire starter / shovel / first aide / hand sanitation / dish soap / bug spray / sunscreen / games / Water Container / daypack / hiking pack / hydration pack
     private String rating; // 50spf / 3season / 20degrees / 20%deet
     private String storage; // 40L / 500watts / 7gal
     private String powerSource; // battery / solar / pump / squeeze / propane / manual
     private String size; // 2person / 6person / Large / small / 10oz
+    private String extraInfo; // rainfly / usb-c / micro-usb / usb-a / mini-usb /
     private double weight;
     private double height;
     private double width;
+    private double length;
     private double userScore; // scale of 1-5 stars
 
     public GearItemsEntity() {
@@ -93,6 +95,14 @@ public class GearItemsEntity {
         this.size = size;
     }
 
+    public String getExtraInfo() {
+        return extraInfo;
+    }
+
+    public void setExtraInfo(String extraInfo) {
+        this.extraInfo = extraInfo;
+    }
+
     public double getWeight() {
         return weight;
     }
@@ -115,6 +125,14 @@ public class GearItemsEntity {
 
     public void setWidth(double width) {
         this.width = width;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
     }
 
     public double getUserScore() {

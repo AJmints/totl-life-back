@@ -35,7 +35,7 @@ public class UserSpecificGearEntity {
     public UserSpecificGearEntity() {
     }
 
-    public UserSpecificGearEntity(GearItemsEntity gearItem, BackPackEntity userBackPack, String additionalDetails, boolean lendable, int quantity, String itemCondition, boolean hidden, boolean forSale) {
+    public UserSpecificGearEntity(GearItemsEntity gearItem, BackPackEntity userBackPack, String additionalDetails, boolean lendable, int quantity, String itemCondition, boolean hidden, boolean forSale, double price) {
         this.dateCreated = Calendar.getInstance();
         this.gearItem = gearItem;
         this.userBackPack = userBackPack;
@@ -45,6 +45,7 @@ public class UserSpecificGearEntity {
         this.itemCondition = itemCondition;
         this.hidden = hidden;
         this.forSale = forSale;
+        this.price = price;
     }
 
     public long getId() {
