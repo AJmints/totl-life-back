@@ -10,6 +10,7 @@ import life.totl.totlback.backpack.repository.GearItemsEntityRepository;
 import life.totl.totlback.backpack.repository.UserSpecificGearEntityRepository;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.UserEntity;
+import life.totl.totlback.users.models.response.ResponseMessage;
 import life.totl.totlback.users.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,13 +54,23 @@ public class GearController {
         Optional<UserEntity> user = userEntityRepository.findById(gearItemDTO.getUserId());
 
         if (user.isPresent()) {
-            GearItemsEntity newBackPack = new GearItemsEntity(gearItemDTO.getCategory(), gearItemDTO.getBrand(), gearItemDTO.getType());
-            UserSpecificGearEntity userGear = new UserSpecificGearEntity(newBackPack, user.get().getUserBackPack(), "", false, 1, "", false, false, 10.00);
 
-            return ResponseEntity.status(HttpStatus.OK).body(userGear);
+            GearItemsEntity newItem = new GearItemsEntity(gearItemDTO.getCategory(), gearItemDTO.getBrand(), gearItemDTO.getType(), gearItemDTO.getExtraInfo(), gearItemDTO.getModel(), gearItemDTO.getSize(), gearItemDTO.getStorage(), gearItemDTO.getWeight());
+
+            for (GearItemsEntity item : gearItemsEntityRepository.findAllByType(gearItemDTO.getType())) {
+                if (item.equalBackPack(gearItemDTO)) {
+                    newItem = item;
+                    break;
+                }
+            }
+
+            UserSpecificGearEntity userGear = new UserSpecificGearEntity(newItem, user.get().getUserBackPack(), gearItemDTO.getAdditionalDetails(), gearItemDTO.isLendable(), 1, gearItemDTO.getItemCondition(), false, false, 0.0);
+
+            userSpecificGearEntityRepository.save(userGear);
+
+            return ResponseEntity.status(HttpStatus.OK).body(user.get().getUserBackPack().getUserGear());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(gearItemDTO);
-
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("error", "something went wrong, try again later."));
     }
 
 }

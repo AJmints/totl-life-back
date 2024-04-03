@@ -12,21 +12,24 @@ public class UserSpecificGearEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "gear_item_id", referencedColumnName = "id")
     private GearItemsEntity gearItem;
 
     @ManyToOne
-    @JoinColumn(name = "item_in_user_backpack", referencedColumnName = "id")
+    @JoinColumn(name = "user_backpack", referencedColumnName = "id")
     @JsonIgnore
     private BackPackEntity userBackPack;
     @ManyToOne
     @JoinColumn(name = "config_backpack_items", referencedColumnName = "id")
+    @JsonIgnore
     private BackPackConfigurationEntity configBackPack;
     private Calendar dateCreated;
+    @Column(columnDefinition = "VARCHAR(255)")
     private String additionalDetails;
     private boolean lendable;
     private int quantity;
+    @Column(columnDefinition = "VARCHAR(50) NOT NULL")
     private String itemCondition; //Good / bad / used / rough / broken
     private boolean forSale;
     private double price;
