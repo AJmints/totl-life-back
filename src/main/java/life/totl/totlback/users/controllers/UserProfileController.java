@@ -104,9 +104,9 @@ public class UserProfileController {
 
         UserContextDTO newContext;
         if (Arrays.equals(user.get().getUserPFP().getImage(), new byte[256])){
-            newContext = new UserContextDTO(user.get().getUserName(),user.get().getId(),user.get().isAccountVerified(), followingLogs, user.get().getUserMadeLogs());
+            newContext = new UserContextDTO(user.get().getUserName(),user.get().getId(),user.get().isAccountVerified(), followingLogs, user.get().getUserMadeLogs(), user.get().getUserBackPack().getUserGear());
         } else {
-            newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build(), followingLogs, user.get().getUserMadeLogs());
+            newContext = new UserContextDTO(user.get().getUserName(), user.get().getId(),user.get().isAccountVerified(), ProfilePictureEntity.builder().image(ImageUtility.decompressImage(user.get().getUserPFP().getImage())).build(), followingLogs, user.get().getUserMadeLogs(), user.get().getUserBackPack().getUserGear());
         }
 
 

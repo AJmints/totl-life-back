@@ -2,6 +2,7 @@ package life.totl.totlback.backpack.controllers;
 
 import life.totl.totlback.backpack.models.BackPackEntity;
 import life.totl.totlback.backpack.models.dtos.GearItemDTO;
+import life.totl.totlback.backpack.models.dtos.response.UserGearListResponseDTO;
 import life.totl.totlback.backpack.repository.BackPackConfigurationRepository;
 import life.totl.totlback.backpack.repository.BackPackEntityRepository;
 import life.totl.totlback.backpack.repository.GearItemsEntityRepository;
@@ -57,25 +58,12 @@ public class BackPackController {
             if (validUser.get().getUserBackPack().getUserGear().size() == 0) {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("empty", "Pack Empty"));
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body(validUser.get().getUserBackPack().getUserGear());
+                return ResponseEntity.status(HttpStatus.OK).body(new UserGearListResponseDTO("success",validUser.get().getUserBackPack().getUserGear()));
             }
 
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "pack pack was not made"));
 
-    }
-
-    @PostMapping(value = "/create-gear-item")
-    public ResponseEntity<?> createGearItem(@RequestHeader("auth-token") String token, @RequestBody GearItemDTO gearItemDTO ) {
-        try {
-            if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(gearItemDTO);
     }
 }

@@ -4,6 +4,7 @@ package life.totl.totlback.backpack.controllers;
 import life.totl.totlback.backpack.models.GearItemsEntity;
 import life.totl.totlback.backpack.models.UserSpecificGearEntity;
 import life.totl.totlback.backpack.models.dtos.GearItemDTO;
+import life.totl.totlback.backpack.models.dtos.response.UserGearListResponseDTO;
 import life.totl.totlback.backpack.repository.BackPackConfigurationRepository;
 import life.totl.totlback.backpack.repository.BackPackEntityRepository;
 import life.totl.totlback.backpack.repository.GearItemsEntityRepository;
@@ -68,7 +69,7 @@ public class GearController {
 
             userSpecificGearEntityRepository.save(userGear);
 
-            return ResponseEntity.status(HttpStatus.OK).body(user.get().getUserBackPack().getUserGear());
+            return ResponseEntity.status(HttpStatus.OK).body(new UserGearListResponseDTO("success", userGear));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("error", "something went wrong, try again later."));
     }
