@@ -173,4 +173,6 @@ public class GearItemsEntity {
             return false;
         }
     }
+
+    public void removeGearItemsEntity(UserSpecificGearEntity remove) { userLink.remove(remove); }
 }

@@ -74,4 +74,24 @@ public class GearController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("error", "something went wrong, try again later."));
     }
 
+    @DeleteMapping(value = "/deleteItemFromMainPack/{id}")
+    public ResponseEntity<?> deleteItemFromMainBale(@PathVariable("id") Long id, @RequestHeader("auth-token") String token) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+
+        Optional<UserSpecificGearEntity> deleteTarget = userSpecificGearEntityRepository.findById(id);
+
+        if (deleteTarget.isPresent()) {
+            userSpecificGearEntityRepository.delete(deleteTarget.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "Terminated"));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "User Gear could not be deleted"));
+        }
+    }
+
 }

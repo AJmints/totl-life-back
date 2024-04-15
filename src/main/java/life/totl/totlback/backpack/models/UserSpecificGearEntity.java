@@ -126,6 +126,11 @@ public class UserSpecificGearEntity {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    @PreRemove
+    private void removeGearItemsEntity() {
+        this.gearItem.removeGearItemsEntity(this);
+    }
 }
 
 
