@@ -44,6 +44,8 @@ public class GearItemsEntity {
     public GearItemsEntity() {
     }
 
+
+
     public GearItemsEntity(String category, String brand, String type, String extraInfo, String model, String size, String storage, double weight) {
         /** BackPack Constructor */
         this.category = category;
@@ -54,6 +56,18 @@ public class GearItemsEntity {
         this.size = size;
         this.storage = storage;
         this.weight = weight;
+        this.powerSource = "";
+        this.rating = "";
+    }
+
+    public GearItemsEntity(String category, String brand, String type) {
+        /** DryBag Constructor */
+        this.category = category;
+        this.brand = brand;
+        this.type = type;
+        this.model = "";
+        this.size = "";
+        this.extraInfo = "";
         this.powerSource = "";
         this.rating = "";
     }
@@ -166,7 +180,7 @@ public class GearItemsEntity {
         this.userScore = userScore;
     }
 
-    public boolean equalBackPack(GearItemDTO gear) {
+    public boolean equalBackPack(GearItemsEntity gear) {
         if (Objects.equals(this.brand, gear.getBrand()) && Objects.equals(this.category, gear.getCategory()) && Objects.equals(this.extraInfo, gear.getExtraInfo()) && Objects.equals(this.model, gear.getModel()) && Objects.equals(this.size, gear.getSize()) && Objects.equals(this.storage, gear.getStorage()) && Objects.equals(this.type, gear.getType()) && Objects.equals(this.weight, gear.getWeight())) {
             return true;
         } else {

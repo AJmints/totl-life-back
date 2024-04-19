@@ -13,11 +13,13 @@ import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.models.response.ResponseMessage;
 import life.totl.totlback.users.repository.UserEntityRepository;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -42,8 +44,40 @@ public class GearController {
         this.userSpecificGearEntityRepository = userSpecificGearEntityRepository;
     }
 
-    @PostMapping(value = "/create-backpack-item")
-    public ResponseEntity<?> createBackPackItem(@RequestHeader("auth-token") String token, @RequestBody GearItemDTO gearItemDTO) {
+//    @PostMapping(value = "/create-backpack-item")
+//    public ResponseEntity<?> createBackPackItem(@RequestHeader("auth-token") String token, @RequestBody GearItemDTO gearItemDTO) {
+//        try {
+//            if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+//        }
+//
+//        Optional<UserEntity> user = userEntityRepository.findById(gearItemDTO.getUserId());
+//
+//        if (user.isPresent()) {
+//
+//            GearItemsEntity newItem = new GearItemsEntity(gearItemDTO.getCategory(), gearItemDTO.getBrand(), gearItemDTO.getType(), gearItemDTO.getExtraInfo(), gearItemDTO.getModel(), gearItemDTO.getSize(), gearItemDTO.getStorage(), gearItemDTO.getWeight());
+//
+//            for (GearItemsEntity item : gearItemsEntityRepository.findAllByType(gearItemDTO.getType())) {
+//                if (item.equalBackPack(gearItemDTO)) {
+//                    newItem = item;
+//                    break;
+//                }
+//            }
+//
+//            UserSpecificGearEntity userGear = new UserSpecificGearEntity(newItem, user.get().getUserBackPack(), gearItemDTO.getAdditionalDetails(), gearItemDTO.isLendable(), 1, gearItemDTO.getItemCondition(), false, false, 0.0);
+//
+//            userSpecificGearEntityRepository.save(userGear);
+//
+//            return ResponseEntity.status(HttpStatus.OK).body(new UserGearListResponseDTO("success", userGear));
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("error", "something went wrong, try again later."));
+//    }
+
+    @PostMapping(value = "/create-item")
+    public ResponseEntity<?> createDryBagItem(@RequestHeader("auth-token") String token, @RequestBody GearItemDTO gearItemDTO) {
         try {
             if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -56,16 +90,27 @@ public class GearController {
 
         if (user.isPresent()) {
 
-            GearItemsEntity newItem = new GearItemsEntity(gearItemDTO.getCategory(), gearItemDTO.getBrand(), gearItemDTO.getType(), gearItemDTO.getExtraInfo(), gearItemDTO.getModel(), gearItemDTO.getSize(), gearItemDTO.getStorage(), gearItemDTO.getWeight());
+            GearItemsEntity newItem = new GearItemsEntity(gearItemDTO.getCategory(), gearItemDTO.getBrand(), gearItemDTO.getType());
+
+            if (Objects.equals(gearItemDTO.getCategory(), "Back Pack")) {
+                newItem.setExtraInfo(gearItemDTO.getExtraInfo());
+                newItem.setModel(gearItemDTO.getModel());
+                newItem.setSize(gearItemDTO.getSize());
+                newItem.setStorage(gearItemDTO.getStorage());
+                newItem.setWeight(gearItemDTO.getWeight());
+            } else if (Objects.equals(gearItemDTO.getCategory(), "Dry Bag")) {
+                newItem.setStorage(gearItemDTO.getStorage());
+                newItem.setExtraInfo(gearItemDTO.getExtraInfo());
+            }
 
             for (GearItemsEntity item : gearItemsEntityRepository.findAllByType(gearItemDTO.getType())) {
-                if (item.equalBackPack(gearItemDTO)) {
+                if (item.equalBackPack(newItem)) {
                     newItem = item;
                     break;
                 }
             }
 
-            UserSpecificGearEntity userGear = new UserSpecificGearEntity(newItem, user.get().getUserBackPack(), gearItemDTO.getAdditionalDetails(), gearItemDTO.isLendable(), 1, gearItemDTO.getItemCondition(), false, false, 0.0);
+            UserSpecificGearEntity userGear = new UserSpecificGearEntity(user.get().getUserBackPack(), newItem,  gearItemDTO.getAdditionalDetails(), gearItemDTO.isLendable(), gearItemDTO.getQuantity(), gearItemDTO.getItemCondition(), false, false, 0.0);
 
             userSpecificGearEntityRepository.save(userGear);
 
