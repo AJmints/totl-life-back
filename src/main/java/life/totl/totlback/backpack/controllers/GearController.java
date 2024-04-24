@@ -110,7 +110,6 @@ public class GearController {
                 newItem.setWidth(gearItemDTO.getWidth());
                 newItem.setLength(gearItemDTO.getLength());
                 newItem.setStorage("");
-                newItem.setExtraInfo("");
             }
 
             for (GearItemsEntity item : gearItemsEntityRepository.findAllByType(gearItemDTO.getType())) {
