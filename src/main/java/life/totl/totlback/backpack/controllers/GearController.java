@@ -101,6 +101,16 @@ public class GearController {
             } else if (Objects.equals(gearItemDTO.getCategory(), "Dry Bag")) {
                 newItem.setStorage(gearItemDTO.getStorage());
                 newItem.setExtraInfo(gearItemDTO.getExtraInfo());
+            } else if (Objects.equals(gearItemDTO.getCategory(), "Tent")) {
+                newItem.setExtraInfo(gearItemDTO.getExtraInfo());
+                newItem.setSize(gearItemDTO.getSize());
+                newItem.setRating(gearItemDTO.getRating());
+                newItem.setModel(gearItemDTO.getModel());
+                newItem.setWeight(gearItemDTO.getWeight());
+                newItem.setWidth(gearItemDTO.getWidth());
+                newItem.setLength(gearItemDTO.getLength());
+                newItem.setStorage("");
+                newItem.setExtraInfo("");
             }
 
             for (GearItemsEntity item : gearItemsEntityRepository.findAllByType(gearItemDTO.getType())) {
@@ -111,6 +121,7 @@ public class GearController {
             }
 
             UserSpecificGearEntity userGear = new UserSpecificGearEntity(user.get().getUserBackPack(), newItem,  gearItemDTO.getAdditionalDetails(), gearItemDTO.isLendable(), gearItemDTO.getQuantity(), gearItemDTO.getItemCondition(), false, false, 0.0);
+
 
             userSpecificGearEntityRepository.save(userGear);
 
