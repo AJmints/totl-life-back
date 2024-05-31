@@ -110,6 +110,12 @@ public class GearController {
                 newItem.setWidth(gearItemDTO.getWidth());
                 newItem.setLength(gearItemDTO.getLength());
                 newItem.setStorage("");
+            } else if (Objects.equals(gearItemDTO.getCategory(), "Sleep Gear")) {
+                newItem.setExtraInfo(gearItemDTO.getExtraInfo());
+                newItem.setWeight(gearItemDTO.getWeight());
+                newItem.setRating(gearItemDTO.getRating());
+                newItem.setModel(gearItemDTO.getModel());
+                newItem.setStorage("");
             }
 
             for (GearItemsEntity item : gearItemsEntityRepository.findAllByType(gearItemDTO.getType())) {
