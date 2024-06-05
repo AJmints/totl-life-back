@@ -28,6 +28,7 @@ public class EmailService {
     }
     @Async
     public void sendEmail(SimpleMailMessage email) {
+        email.setFrom("totl.lyfe@gmail.com");
         javaMailSender.send(email);
     }
 
