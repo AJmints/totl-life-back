@@ -1,6 +1,9 @@
 package life.totl.totlback.backpack.controllers;
 
+import life.totl.totlback.backpack.models.BackPackConfigurationEntity;
 import life.totl.totlback.backpack.models.BackPackEntity;
+import life.totl.totlback.backpack.models.UserSpecificGearEntity;
+import life.totl.totlback.backpack.models.dtos.BackPackConfigDTO;
 import life.totl.totlback.backpack.models.dtos.GearItemDTO;
 import life.totl.totlback.backpack.models.dtos.response.UserGearListResponseDTO;
 import life.totl.totlback.backpack.repository.BackPackConfigurationRepository;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -65,5 +69,31 @@ public class BackPackController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "pack pack was not made"));
 
+    }
+
+    // New method to Create a pack with the option to Add items or just create an empty pack
+    @PostMapping
+    public ResponseEntity<?> createNewBackPackConfig (@RequestHeader("auth-token") String token, BackPackConfigDTO packConfigDTO) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+        Optional<UserEntity> user = userEntityRepository.findById(packConfigDTO.getUserID());
+
+        if (!packConfigDTO.getSpecificGearItems().isEmpty()) {
+            for (Map<Long, String> gear : packConfigDTO.getSpecificGearItems()) {
+            }
+        }
+
+        BackPackConfigurationEntity newConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName());
+        newConfig.setHidden(packConfigDTO.isHidden());
+
+
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Testing", "Making sure the method is working."));
     }
 }
