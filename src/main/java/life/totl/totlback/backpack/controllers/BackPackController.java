@@ -20,9 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowCredentials = "true")
@@ -71,9 +69,8 @@ public class BackPackController {
 
     }
 
-    // New method to Create a pack with the option to Add items or just create an empty pack
-    @PostMapping
-    public ResponseEntity<?> createNewBackPackConfig (@RequestHeader("auth-token") String token, BackPackConfigDTO packConfigDTO) {
+    @PostMapping(value = "/create-pack-config")
+    public ResponseEntity<?> createNewBackPackConfig (@RequestHeader("auth-token") String token,@RequestBody BackPackConfigDTO packConfigDTO) {
         try {
             if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -83,17 +80,40 @@ public class BackPackController {
         }
         Optional<UserEntity> user = userEntityRepository.findById(packConfigDTO.getUserID());
 
-        if (!packConfigDTO.getSpecificGearItems().isEmpty()) {
-            for (Map<Long, String> gear : packConfigDTO.getSpecificGearItems()) {
+        if (user.isPresent() && packConfigDTO.getSpecificGearItems().size() > 2) {
+
+            List<UserSpecificGearEntity> userPack = new ArrayList<>();
+            int itemNotAdded = 0;
+
+            for (Long gearID : packConfigDTO.getSpecificGearItems()) {
+                if (userSpecificGearEntityRepository.existsById(gearID)) {
+                    Optional<UserSpecificGearEntity> userGear = userSpecificGearEntityRepository.findById(gearID);
+                    if (userGear.isPresent()) {
+                        userPack.add(userGear.get());
+                    } else {
+                        itemNotAdded++;
+                    }
+                }
             }
+
+
+            if (itemNotAdded == 0) {
+                BackPackConfigurationEntity packConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName());
+                packConfig.setUserGear(userPack);
+                if (packConfig.isHidden()) {
+                    packConfig.setHidden(packConfig.isHidden());
+                }
+
+                return ResponseEntity.status(HttpStatus.OK).body(userPack);
+            }
+
         }
 
-        BackPackConfigurationEntity newConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName());
-        newConfig.setHidden(packConfigDTO.isHidden());
-
-
-
-
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Testing", "Making sure the method is working."));
+
+
+
+
+
     }
 }
