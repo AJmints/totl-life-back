@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Calendar;
+import java.util.List;
 
 @Entity
 @Table(name = "user_specific_gear")
@@ -20,10 +21,8 @@ public class UserSpecificGearEntity {
     @JoinColumn(name = "user_backpack", referencedColumnName = "id")
     @JsonIgnore
     private BackPackEntity userBackPack;
-    @ManyToOne
-    @JoinColumn(name = "config_backpack_items", referencedColumnName = "id")
-    @JsonIgnore
-    private BackPackConfigurationEntity configBackPack;
+    @ManyToMany(mappedBy = "userGearList")
+    private List<BackPackConfigurationEntity> configBackPacks;
     private Calendar dateCreated;
     @Column(columnDefinition = "VARCHAR(255)")
     private String additionalDetails;
@@ -67,9 +66,6 @@ public class UserSpecificGearEntity {
         return userBackPack;
     }
 
-    public BackPackConfigurationEntity getConfigBackPack() {
-        return configBackPack;
-    }
 
     public Calendar getDateCreated() {
         return dateCreated;

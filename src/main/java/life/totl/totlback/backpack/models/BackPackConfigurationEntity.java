@@ -3,6 +3,7 @@ package life.totl.totlback.backpack.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -17,8 +18,12 @@ public class BackPackConfigurationEntity {
     @JoinColumn(name = "parent_back_pack", referencedColumnName = "id")
     @JsonIgnore
     private BackPackEntity parentBackPack;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "configBackPack")
-    private List<UserSpecificGearEntity> userGear;
+    @ManyToMany
+    @JoinTable(
+            name = "config_pack_contents",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "pack_config_id"))
+    private List<UserSpecificGearEntity> userGearList;
     private Calendar dateCreated;
     private String configType; // hiking pack / car camp pack / float pack
     private String packName;
@@ -27,11 +32,12 @@ public class BackPackConfigurationEntity {
     public BackPackConfigurationEntity() {
     }
 
-    public BackPackConfigurationEntity(BackPackEntity backPackEntity, String configType, String packName) {
+    public BackPackConfigurationEntity(BackPackEntity backPackEntity, String configType, String packName, List<UserSpecificGearEntity> userGearList) {
         this.dateCreated = Calendar.getInstance();
         this.parentBackPack = backPackEntity;
         this.configType = configType;
         this.packName = packName;
+        this.userGearList = userGearList;
         this.hidden = false;
     }
 
@@ -51,13 +57,6 @@ public class BackPackConfigurationEntity {
         return dateCreated;
     }
 
-    public List<UserSpecificGearEntity> getUserGear() {
-        return userGear;
-    }
-
-    public void setUserGear(List<UserSpecificGearEntity> userGear) {
-        this.userGear = userGear;
-    }
 
     public String getPackName() {
         return packName;
@@ -65,6 +64,10 @@ public class BackPackConfigurationEntity {
 
     public void setPackName(String packName) {
         this.packName = packName;
+    }
+
+    public List<UserSpecificGearEntity> getUserGearList() {
+        return userGearList;
     }
 
     public boolean isHidden() {

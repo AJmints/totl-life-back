@@ -69,6 +69,19 @@ public class BackPackController {
 
     }
 
+    @GetMapping(value = "/get-user-pack-configs/{id}")
+    public ResponseEntity<?> getUserPackConfigs(@PathVariable("id") long userID) {
+
+        Optional<UserEntity> user = userEntityRepository.findById(userID);
+
+        if (user.isPresent()) {
+            List<BackPackConfigurationEntity> userPacks = user.get().getUserBackPack().getBackPackConfig();
+            return ResponseEntity.status(HttpStatus.OK).body(userPacks);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(userID);
+    }
+
     @PostMapping(value = "/create-pack-config")
     public ResponseEntity<?> createNewBackPackConfig (@RequestHeader("auth-token") String token,@RequestBody BackPackConfigDTO packConfigDTO) {
         try {
@@ -80,7 +93,7 @@ public class BackPackController {
         }
         Optional<UserEntity> user = userEntityRepository.findById(packConfigDTO.getUserID());
 
-        if (user.isPresent() && packConfigDTO.getSpecificGearItems().size() > 2) {
+        if (user.isPresent() && packConfigDTO.getSpecificGearItems().size() > 1) {
 
             List<UserSpecificGearEntity> userPack = new ArrayList<>();
             int itemNotAdded = 0;
@@ -88,28 +101,25 @@ public class BackPackController {
             for (Long gearID : packConfigDTO.getSpecificGearItems()) {
                 if (userSpecificGearEntityRepository.existsById(gearID)) {
                     Optional<UserSpecificGearEntity> userGear = userSpecificGearEntityRepository.findById(gearID);
-                    if (userGear.isPresent()) {
-                        userPack.add(userGear.get());
-                    } else {
-                        itemNotAdded++;
-                    }
+                    userGear.ifPresent(userPack::add);
+                } else {
+                    itemNotAdded = itemNotAdded + 1;
                 }
             }
 
-
             if (itemNotAdded == 0) {
-                BackPackConfigurationEntity packConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName());
-                packConfig.setUserGear(userPack);
+                BackPackConfigurationEntity packConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName(),userPack);
                 if (packConfig.isHidden()) {
                     packConfig.setHidden(packConfig.isHidden());
                 }
+                backPackConfigurationRepository.save(packConfig);
 
                 return ResponseEntity.status(HttpStatus.OK).body(userPack);
             }
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Testing", "Making sure the method is working."));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "An item could not be added, please try again later"));
 
 
 
