@@ -27,16 +27,18 @@ public class BackPackConfigurationEntity {
     private Calendar dateCreated;
     private String configType; // hiking pack / car camp pack / float pack
     private String packName;
+    private String packNotes;
     private boolean hidden;
 
     public BackPackConfigurationEntity() {
     }
 
-    public BackPackConfigurationEntity(BackPackEntity backPackEntity, String configType, String packName, List<UserSpecificGearEntity> userGearList) {
+    public BackPackConfigurationEntity(BackPackEntity backPackEntity, String configType, String packName, String packNotes,List<UserSpecificGearEntity> userGearList) {
         this.dateCreated = Calendar.getInstance();
         this.parentBackPack = backPackEntity;
         this.configType = configType;
         this.packName = packName;
+        this.packNotes = packNotes;
         this.userGearList = userGearList;
         this.hidden = false;
     }
@@ -57,6 +59,13 @@ public class BackPackConfigurationEntity {
         return dateCreated;
     }
 
+    public String getPackNotes() {
+        return packNotes;
+    }
+
+    public void setPackNotes(String packNotes) {
+        this.packNotes = packNotes;
+    }
 
     public String getPackName() {
         return packName;

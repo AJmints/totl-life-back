@@ -92,11 +92,10 @@ public class BackPackController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
         Optional<UserEntity> user = userEntityRepository.findById(packConfigDTO.getUserID());
-
+        int itemNotAdded = 0;
         if (user.isPresent() && packConfigDTO.getSpecificGearItems().size() > 1) {
 
             List<UserSpecificGearEntity> userPack = new ArrayList<>();
-            int itemNotAdded = 0;
 
             for (Long gearID : packConfigDTO.getSpecificGearItems()) {
                 if (userSpecificGearEntityRepository.existsById(gearID)) {
@@ -108,22 +107,20 @@ public class BackPackController {
             }
 
             if (itemNotAdded == 0) {
-                BackPackConfigurationEntity packConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName(),userPack);
+                BackPackConfigurationEntity packConfig = new BackPackConfigurationEntity(user.get().getUserBackPack(), packConfigDTO.getConfigType(), packConfigDTO.getPackName(), packConfigDTO.getPackNotes(), userPack);
                 if (packConfig.isHidden()) {
                     packConfig.setHidden(packConfig.isHidden());
                 }
                 backPackConfigurationRepository.save(packConfig);
 
-                return ResponseEntity.status(HttpStatus.OK).body(userPack);
+                return ResponseEntity.status(HttpStatus.OK).body(packConfig);
             }
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "An item could not be added, please try again later"));
-
-
-
-
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", itemNotAdded + " item was not able to be added, process failed."));
 
     }
+
+
 }

@@ -16,6 +16,7 @@ public class BackPackConfigDTO {
     private List<Long> specificGearItems; //Item IDs , Item Name or other identifier
     private String configType;
     private String packName;
+    private String packNotes;
     private Boolean hiddenPack;
 
 
