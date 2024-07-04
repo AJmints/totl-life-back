@@ -70,16 +70,12 @@ public class BackPackController {
     }
 
     @GetMapping(value = "/get-user-pack-configs/{id}")
-    public ResponseEntity<?> getUserPackConfigs(@PathVariable("id") long userID) {
+    public ResponseEntity<?> getUserPackConfigs(@PathVariable("id") String userID) {
 
-        Optional<UserEntity> user = userEntityRepository.findById(userID);
+        UserEntity user = userEntityRepository.findByUserName(userID);
+        List<BackPackConfigurationEntity> userPacks = user.getUserBackPack().getBackPackConfig();
+        return ResponseEntity.status(HttpStatus.OK).body(userPacks);
 
-        if (user.isPresent()) {
-            List<BackPackConfigurationEntity> userPacks = user.get().getUserBackPack().getBackPackConfig();
-            return ResponseEntity.status(HttpStatus.OK).body(userPacks);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(userID);
     }
 
     @PostMapping(value = "/create-pack-config")
