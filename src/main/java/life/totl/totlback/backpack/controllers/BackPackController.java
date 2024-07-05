@@ -89,7 +89,7 @@ public class BackPackController {
         }
         Optional<UserEntity> user = userEntityRepository.findById(packConfigDTO.getUserID());
         int itemNotAdded = 0;
-        if (user.isPresent() && packConfigDTO.getSpecificGearItems().size() > 0) {
+        if (user.isPresent() && !packConfigDTO.getSpecificGearItems().isEmpty()) {
 
             List<UserSpecificGearEntity> userPack = new ArrayList<>();
 
@@ -116,6 +116,12 @@ public class BackPackController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", itemNotAdded + " item was not able to be added, process failed."));
 
+    }
+
+    @DeleteMapping(value = "/delete-pack-config")
+    public ResponseEntity<?> deletePackConfig() {
+
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
 
