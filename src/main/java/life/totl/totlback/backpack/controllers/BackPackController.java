@@ -89,7 +89,7 @@ public class BackPackController {
         }
         Optional<UserEntity> user = userEntityRepository.findById(packConfigDTO.getUserID());
         int itemNotAdded = 0;
-        if (user.isPresent() && !packConfigDTO.getSpecificGearItems().isEmpty()) {
+        if (user.isPresent() && packConfigDTO.getSpecificGearItems().size() > 0) {
 
             List<UserSpecificGearEntity> userPack = new ArrayList<>();
 
