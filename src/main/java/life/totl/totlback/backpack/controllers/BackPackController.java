@@ -5,6 +5,7 @@ import life.totl.totlback.backpack.models.BackPackEntity;
 import life.totl.totlback.backpack.models.UserSpecificGearEntity;
 import life.totl.totlback.backpack.models.dtos.BackPackConfigDTO;
 import life.totl.totlback.backpack.models.dtos.GearItemDTO;
+import life.totl.totlback.backpack.models.dtos.response.PackConfigResponseDTO;
 import life.totl.totlback.backpack.models.dtos.response.UserGearListResponseDTO;
 import life.totl.totlback.backpack.repository.BackPackConfigurationRepository;
 import life.totl.totlback.backpack.repository.BackPackEntityRepository;
@@ -109,7 +110,7 @@ public class BackPackController {
                 }
                 backPackConfigurationRepository.save(packConfig);
 
-                return ResponseEntity.status(HttpStatus.OK).body(packConfig);
+                return ResponseEntity.status(HttpStatus.OK).body(new PackConfigResponseDTO("success", packConfig));
             }
 
         }
