@@ -55,8 +55,13 @@ public class BackPackConfigurationEntity {
         return configType;
     }
 
-    public Calendar getDateCreated() {
-        return dateCreated;
+    public String getDateCreated() {
+
+        int day = this.dateCreated.get(Calendar.DAY_OF_MONTH);
+        int month = this.dateCreated.get(Calendar.MONTH);
+        int year = this.dateCreated.get(Calendar.YEAR);
+
+        return month + "/" + day + "/" + year;
     }
 
     public String getPackNotes() {

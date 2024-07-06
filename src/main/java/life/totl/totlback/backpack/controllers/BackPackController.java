@@ -119,10 +119,25 @@ public class BackPackController {
 
     }
 
-    @DeleteMapping(value = "/delete-pack-config")
-    public ResponseEntity<?> deletePackConfig() {
+    @DeleteMapping(value = "/delete-pack-config/{id}")
+    public ResponseEntity<?> deletePackConfig(@PathVariable("id") Long id, @RequestHeader("auth-token") String token) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        Optional<BackPackConfigurationEntity> deleteTarget = backPackConfigurationRepository.findById(id);
+
+        if (deleteTarget.isPresent()) {
+            backPackConfigurationRepository.delete(deleteTarget.get());
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "Terminated"));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("failed", "Pack Configuration could not be deleted"));
+        }
+
     }
 
 
