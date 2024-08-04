@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import life.totl.totlback.backpack.models.BackPackEntity;
 import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
+import life.totl.totlback.social.models.SocialUserHubEntity;
+import life.totl.totlback.social.models.TurtleRequestEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
@@ -48,6 +50,12 @@ public class UserEntity {
     @JoinColumn(name = "user_backpack", referencedColumnName = "id")
     private BackPackEntity userBackPack;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_social_hub", referencedColumnName = "id")
+    private SocialUserHubEntity socialHub;
+
+    @ManyToMany(mappedBy = "friendList")
+    private List<SocialUserHubEntity> friendConnections;
 
     public UserEntity(String userName, String userEmail, String pwHash, boolean accountVerified) {
         this.userName = userName;
@@ -58,6 +66,15 @@ public class UserEntity {
         //The way PFP was set up is a flaw that will be rebuilt later or fixed in new version. This is a learning project.
         this.userPFP = new ProfilePictureEntity();
         this.userBackPack = new BackPackEntity(this);
+        this.socialHub = new SocialUserHubEntity(this);
+    }
+
+    public SocialUserHubEntity getSocialHub() {
+        return socialHub;
+    }
+
+    public void setSocialHub(SocialUserHubEntity socialHub) {
+        this.socialHub = socialHub;
     }
 
     public UserEntity() {
