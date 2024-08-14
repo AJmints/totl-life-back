@@ -7,10 +7,7 @@ import life.totl.totlback.users.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,18 +25,28 @@ public class SocialController {
         this.userEntityRepository = userEntityRepository;
     }
 
-    @GetMapping(value = "/addSocial")
+    @GetMapping(value = "/addSocial") // make callable with special button
     public ResponseEntity<?> addSocial() {
 
         List<UserEntity> users = userEntityRepository.findAll();
 
-//        for (UserEntity user : users) {
-//                user.setSocialHub(new SocialUserHubEntity(user));
-//                userEntityRepository.save(user);
-//            }
+        for (UserEntity user : users) {
+            user.setSocialHub(new SocialUserHubEntity(user));
+            userEntityRepository.save(user);
+        }
 
+        return ResponseEntity.status(HttpStatus.OK).body("added");
+    }
 
-
-        return ResponseEntity.status(HttpStatus.OK).body(users);
+    @PostMapping(value = "/addFriend")
+    public ResponseEntity<?> addFriend(@RequestHeader("auth-token") String token) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("added");
     }
 }
