@@ -10,6 +10,7 @@ public class FriendRequestDTO {
     private SocialUserHubEntity requester;
     private SocialUserHubEntity requested;
     private String status;
+    // setup
 
 
 }
