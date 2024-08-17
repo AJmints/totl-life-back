@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowCredentials = "true")
@@ -29,17 +31,24 @@ public class SocialController {
     public ResponseEntity<?> addSocial() {
 
         List<UserEntity> users = userEntityRepository.findAll();
+        HashMap<String, String> status = new HashMap<>();
 
         for (UserEntity user : users) {
-            user.setSocialHub(new SocialUserHubEntity(user));
-            userEntityRepository.save(user);
+            if (Objects.equals(user.getSocialHub(), null)) {
+                user.setSocialHub(new SocialUserHubEntity(user));
+                userEntityRepository.save(user);
+                status.put(user.getUserName(), "Added");
+            } else {
+                status.put(user.getUserName(), "Already has");
+            }
+
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("added");
+        return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
-    @PostMapping(value = "/addFriend")
-    public ResponseEntity<?> addFriend(@RequestHeader("auth-token") String token) {
+    @PostMapping(value = "/requestFriend")
+    public ResponseEntity<?> requestFriend(@RequestHeader("auth-token") String token) {
         try {
             if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -47,6 +56,8 @@ public class SocialController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
+
+        /** Work on friend request **/
         return ResponseEntity.status(HttpStatus.OK).body("added");
     }
 }
