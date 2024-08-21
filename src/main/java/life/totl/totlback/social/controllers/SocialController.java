@@ -64,7 +64,7 @@ public class SocialController {
         }
 
         /** user.getFriendList()
-         *
+
          * getAllTurtleRequest if TurtleRequest.requester/requested.includeUser && requestStatus == 'pending'
          * */
 
