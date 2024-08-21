@@ -17,8 +17,6 @@ public class FriendRequestDTO {
     private SocialUserHubEntity requester;
     private SocialUserHubEntity requested;
     private String status;
-    // setup
-
 
     public FriendRequestDTO(SocialUserHubEntity requester, SocialUserHubEntity requested, String status) {
         this.date = Calendar.getInstance();
