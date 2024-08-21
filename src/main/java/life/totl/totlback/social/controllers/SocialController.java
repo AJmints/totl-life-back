@@ -63,7 +63,7 @@ public class SocialController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
-        /** user.getFriendList()
+        /** user.getFriendList() one more time
 
          * getAllTurtleRequest if TurtleRequest.requester/requested.includeUser && requestStatus == 'pending'
          * */
