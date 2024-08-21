@@ -2,6 +2,9 @@ package life.totl.totlback.social.controllers;
 
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.social.models.SocialUserHubEntity;
+import life.totl.totlback.social.models.TurtleRequestEntity;
+import life.totl.totlback.social.models.dtos.FriendRequestDTO;
+import life.totl.totlback.social.repository.TurtleRequestRepository;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowCredentials = "true")
@@ -20,11 +24,13 @@ public class SocialController {
 
     private final JWTGenerator jwtGenerator;
     private final UserEntityRepository userEntityRepository;
+    private final TurtleRequestRepository turtleRequestRepository;
 
     @Autowired
-    private SocialController(JWTGenerator jwtGenerator, UserEntityRepository userEntityRepository) {
+    private SocialController(JWTGenerator jwtGenerator, UserEntityRepository userEntityRepository, TurtleRequestRepository turtleRequestRepository) {
         this.jwtGenerator = jwtGenerator;
         this.userEntityRepository = userEntityRepository;
+        this.turtleRequestRepository = turtleRequestRepository;
     }
 
     @GetMapping(value = "/addSocial") // make callable with special button
@@ -47,8 +53,26 @@ public class SocialController {
         return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
-    @PostMapping(value = "/requestFriend")
-    public ResponseEntity<?> requestFriend(@RequestHeader("auth-token") String token) {
+    @GetMapping(value = "/user-friend-list/{userid}")
+    public ResponseEntity<?> usersFriendList(@RequestHeader("auth-token") String token, @PathVariable("id") long userId) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+
+        /** user.getFriendList()
+         *
+         * getAllTurtleRequest if TurtleRequest.requester/requested.includeUser && requestStatus == 'pending'
+         * */
+
+        return ResponseEntity.status(HttpStatus.OK).body("added");
+    }
+
+    @PostMapping(value = "/request-friend")
+    public ResponseEntity<?> requestFriend(@RequestHeader("auth-token") String token, @RequestBody FriendRequestDTO requestDTO) {
         try {
             if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -57,7 +81,51 @@ public class SocialController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
-        /** Work on friend request **/
+        Optional<UserEntity> user = userEntityRepository.findById(requestDTO.getRequester().getId());
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nothing happens");
+        } else {
+            turtleRequestRepository.save(new TurtleRequestEntity(requestDTO.getRequester(), requestDTO.getRequested(), requestDTO.getStatus()));
+            return ResponseEntity.status(HttpStatus.OK).body("added");
+        }
+        /** if TurtleRequest contains requester/requested = return request exists (friend request object returned
+         *  else new request - save as pending */
+    }
+
+    @PostMapping(value = "/handle-friend-request-action")
+    public ResponseEntity<?> friendRequestActionHandler(@RequestHeader("auth-token") String token, @RequestBody FriendRequestDTO requestDTO) {
+        try {
+            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+
+        /** requester/requested is on TurtleRequest requester/requested */
+
+        /** Should this be a function that lives in TurtleRequest to handle this? Yes
+         *
+         * If requestDTO.status = accept
+         *  TurtleRequest.setStatus("accept")
+         *  user.getSocialHub.getFriendList.add(requester/requested)
+         *  saveUser
+         *
+         * If requestDTO.status = decline
+         *  TurtleRequest.setStatus("decline")
+         *
+         * If requestDTO.status = cancel
+         * TurtleRequest.setStatus("cancel")
+         *
+         * If requestDTO.status = unfriend
+         * TurtleRequest.setStatus("unfriend")
+         * user.getSocialHub.getFriendList.remove(requester/requested)
+         * saveUser
+         *
+         * */
+
+
         return ResponseEntity.status(HttpStatus.OK).body("added");
     }
+
 }
