@@ -14,11 +14,11 @@ import java.util.Calendar;
 public class FriendRequestDTO {
 
     private Calendar date;
-    private SocialUserHubEntity requester;
-    private SocialUserHubEntity requested;
+    private String requester;
+    private String requested;
     private String status;
 
-    public FriendRequestDTO(SocialUserHubEntity requester, SocialUserHubEntity requested, String status) {
+    public FriendRequestDTO(String requester, String requested, String status) {
         this.date = Calendar.getInstance();
         this.requester = requester;
         this.requested = requested;
@@ -33,19 +33,19 @@ public class FriendRequestDTO {
         this.date = date;
     }
 
-    public SocialUserHubEntity getRequester() {
+    public String getRequester() {
         return requester;
     }
 
-    public void setRequester(SocialUserHubEntity requester) {
+    public void setRequester(String requester) {
         this.requester = requester;
     }
 
-    public SocialUserHubEntity getRequested() {
+    public String getRequested() {
         return requested;
     }
 
-    public void setRequested(SocialUserHubEntity requested) {
+    public void setRequested(String requested) {
         this.requested = requested;
     }
 

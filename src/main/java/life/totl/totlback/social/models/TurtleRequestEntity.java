@@ -21,16 +21,21 @@ public class TurtleRequestEntity {
     @JoinColumn(name = "requested", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity requested;
-    private String status;  // Pending, accepted, declined, canceled, unfriended
+    @ManyToOne
+    @JoinColumn(name = "lastActor", referencedColumnName = "id")
+    @JsonIgnore
+    private SocialUserHubEntity lastActor;
+    private String status;  // Pending, friended, unfriended, blocked, declined, canceled, unfriended
 
     public TurtleRequestEntity() {
     }
 
-    public TurtleRequestEntity(SocialUserHubEntity requester, SocialUserHubEntity requested, String status) {
+    public TurtleRequestEntity(String status, SocialUserHubEntity lastActor, SocialUserHubEntity requested, SocialUserHubEntity requester) {
         this.dateCreated = Calendar.getInstance();
-        this.requester = requester;
-        this.requested = requested;
         this.status = status;
+        this.lastActor = lastActor;
+        this.requested = requested;
+        this.requester = requester;
     }
 
     public Long getId() {
@@ -57,4 +62,11 @@ public class TurtleRequestEntity {
         this.status = status;
     }
 
+    public SocialUserHubEntity getLastActor() {
+        return lastActor;
+    }
+
+    public void setLastActor(SocialUserHubEntity lastActor) {
+        this.lastActor = lastActor;
+    }
 }

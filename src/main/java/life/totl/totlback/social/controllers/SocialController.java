@@ -6,6 +6,7 @@ import life.totl.totlback.social.models.TurtleRequestEntity;
 import life.totl.totlback.social.models.dtos.FriendRequestDTO;
 import life.totl.totlback.social.repository.TurtleRequestRepository;
 import life.totl.totlback.users.models.UserEntity;
+import life.totl.totlback.users.models.response.ResponseMessage;
 import life.totl.totlback.users.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -78,15 +79,23 @@ public class SocialController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
-        Optional<UserEntity> user = userEntityRepository.findById(requestDTO.getRequester().getId());
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nothing happens");
+        Optional<UserEntity> requester = Optional.ofNullable(userEntityRepository.findByUserName(requestDTO.getRequester()));
+        Optional<UserEntity> requested = Optional.ofNullable(userEntityRepository.findByUserName(requestDTO.getRequested()));
+
+        if (requester.isEmpty() || requested.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Invalid user", "failed"));
         } else {
-            turtleRequestRepository.save(new TurtleRequestEntity(requestDTO.getRequester(), requestDTO.getRequested(), requestDTO.getStatus()));
-            return ResponseEntity.status(HttpStatus.OK).body("added");
+
+            if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub()) || turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage( requester.get().getUserName(), "exists-requester"));
+            } else {
+                turtleRequestRepository.save(new TurtleRequestEntity(requestDTO.getStatus(), requester.get().getSocialHub(), requested.get().getSocialHub(), requester.get().getSocialHub()));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("added", "success"));
+            }
+
         }
         /** if TurtleRequest contains requester/requested = return request exists (friend request object returned
          *  else new request - save as pending */

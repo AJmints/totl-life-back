@@ -1,7 +1,9 @@
 package life.totl.totlback.social.repository;
 
+import life.totl.totlback.social.models.SocialUserHubEntity;
 import life.totl.totlback.social.models.TurtleRequestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TurtleRequestRepository extends JpaRepository<TurtleRequestEntity, Long> {
+    Boolean existsByRequesterAndRequested(SocialUserHubEntity requester, SocialUserHubEntity requested);
 }
