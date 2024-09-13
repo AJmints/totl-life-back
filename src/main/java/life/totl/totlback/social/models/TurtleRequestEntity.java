@@ -2,9 +2,12 @@ package life.totl.totlback.social.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Calendar;
 
+@Getter
 @Entity
 @Table(name = "turtle_request_entities")
 public class TurtleRequestEntity {
@@ -21,10 +24,12 @@ public class TurtleRequestEntity {
     @JoinColumn(name = "requested", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity requested;
+    @Setter
     @ManyToOne
     @JoinColumn(name = "lastActor", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity lastActor;
+    @Setter
     private String status;  // Pending, friended, unfriended, blocked, declined, canceled, unfriended
 
     public TurtleRequestEntity() {
@@ -38,35 +43,4 @@ public class TurtleRequestEntity {
         this.requester = requester;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Calendar getDateCreated() {
-        return dateCreated;
-    }
-
-    public SocialUserHubEntity getRequester() {
-        return requester;
-    }
-
-    public SocialUserHubEntity getRequested() {
-        return requested;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public SocialUserHubEntity getLastActor() {
-        return lastActor;
-    }
-
-    public void setLastActor(SocialUserHubEntity lastActor) {
-        this.lastActor = lastActor;
-    }
 }

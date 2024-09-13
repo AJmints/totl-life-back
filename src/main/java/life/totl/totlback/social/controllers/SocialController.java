@@ -4,6 +4,7 @@ import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.social.models.SocialUserHubEntity;
 import life.totl.totlback.social.models.TurtleRequestEntity;
 import life.totl.totlback.social.models.dtos.FriendRequestDTO;
+import life.totl.totlback.social.models.dtos.TurtleRequestStatusDTO;
 import life.totl.totlback.social.repository.TurtleRequestRepository;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.models.response.ResponseMessage;
@@ -70,6 +71,33 @@ public class SocialController {
          * */
 
         return ResponseEntity.status(HttpStatus.OK).body("added");
+    }
+
+    @GetMapping(value = "/request-status/{userId}/{userName}")
+    public ResponseEntity<?> requestStatus(@PathVariable("userId") long userId, @PathVariable("userName") String userName) {
+
+        Optional<UserEntity> requester = userEntityRepository.findById(userId);
+        Optional<UserEntity> requested = Optional.ofNullable(userEntityRepository.findByUserName(userName));
+
+        if (requester.isEmpty() || requested.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Invalid user", "failed"));
+        }
+
+        if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub())) {
+
+            TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub());
+            return ResponseEntity.status(HttpStatus.OK).body(new TurtleRequestStatusDTO("success",request.getStatus(), request.getRequester().getUser().getUserName(), request.getRequested().getUser().getUserName()));
+
+        } else if (turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
+
+            TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
+            return ResponseEntity.status(HttpStatus.OK).body(new TurtleRequestStatusDTO("success", request.getStatus(), request.getRequester().getUser().getUserName(), request.getRequested().getUser().getUserName()));
+
+        } else {
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
+
+        }
     }
 
     @PostMapping(value = "/request-friend")

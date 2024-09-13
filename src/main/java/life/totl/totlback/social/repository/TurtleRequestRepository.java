@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TurtleRequestRepository extends JpaRepository<TurtleRequestEntity, Long> {
     Boolean existsByRequesterAndRequested(SocialUserHubEntity requester, SocialUserHubEntity requested);
+    TurtleRequestEntity findByRequesterAndRequested(SocialUserHubEntity requester, SocialUserHubEntity requested);
+
 }
