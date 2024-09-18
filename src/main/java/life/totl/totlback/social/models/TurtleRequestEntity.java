@@ -2,6 +2,8 @@ package life.totl.totlback.social.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import life.totl.totlback.social.models.dtos.FriendRequestDTO;
+import life.totl.totlback.social.models.dtos.TurtleRequestStatusDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,20 +17,25 @@ public class TurtleRequestEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Calendar dateCreated;
+
     @ManyToOne
     @JoinColumn(name = "requester", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity requester;
+
     @ManyToOne
     @JoinColumn(name = "requested", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity requested;
+
     @Setter
     @ManyToOne
     @JoinColumn(name = "lastActor", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity lastActor;
+
     @Setter
     private String status;  // Pending, friended, unfriended, blocked, declined, canceled, unfriended
 
@@ -41,6 +48,14 @@ public class TurtleRequestEntity {
         this.lastActor = lastActor;
         this.requested = requested;
         this.requester = requester;
+    }
+
+    // method on the class to return a full TurtleRequestStatus to the front (JSONIgnore is messing it up)
+    public TurtleRequestStatusDTO getFullFriendRequest() {
+
+        TurtleRequestStatusDTO details = new TurtleRequestStatusDTO("success", this.status, this.requester.getUser().getUserName(), this.requested.getUser().getUserName(), this.lastActor.getUser().getUserName());
+
+        return details;
     }
 
 }
