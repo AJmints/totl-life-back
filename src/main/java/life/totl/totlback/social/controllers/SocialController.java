@@ -5,6 +5,7 @@ import life.totl.totlback.social.models.SocialUserHubEntity;
 import life.totl.totlback.social.models.TurtleRequestEntity;
 import life.totl.totlback.social.models.dtos.FriendRequestDTO;
 import life.totl.totlback.social.models.dtos.TurtleRequestStatusDTO;
+import life.totl.totlback.social.repository.SocialUserHubRepository;
 import life.totl.totlback.social.repository.TurtleRequestRepository;
 import life.totl.totlback.users.models.UserEntity;
 import life.totl.totlback.users.models.response.ResponseMessage;
@@ -27,12 +28,14 @@ public class SocialController {
     private final JWTGenerator jwtGenerator;
     private final UserEntityRepository userEntityRepository;
     private final TurtleRequestRepository turtleRequestRepository;
+    private final SocialUserHubRepository socialUserHubRepository;
 
     @Autowired
-    private SocialController(JWTGenerator jwtGenerator, UserEntityRepository userEntityRepository, TurtleRequestRepository turtleRequestRepository) {
+    private SocialController(JWTGenerator jwtGenerator, UserEntityRepository userEntityRepository, TurtleRequestRepository turtleRequestRepository, SocialUserHubRepository socialUserHubRepository) {
         this.jwtGenerator = jwtGenerator;
         this.userEntityRepository = userEntityRepository;
         this.turtleRequestRepository = turtleRequestRepository;
+        this.socialUserHubRepository = socialUserHubRepository;
     }
 
     @GetMapping(value = "/addSocial") // make callable with special button
@@ -116,15 +119,27 @@ public class SocialController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Invalid user", "failed"));
         } else {
 
-            if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub()) || turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
+            if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub())) {
                 TurtleRequestEntity update = turtleRequestRepository.findByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub());
                 if (Objects.equals(update.getStatus(), "cancel")) {
                     update.setStatus("pending");
+                    update.setRequester(requester.get().getSocialHub());
+                    update.setRequested(requested.get().getSocialHub());
                     update.setLastActor(requester.get().getSocialHub());
                     turtleRequestRepository.save(update);
                 }
                 return ResponseEntity.status(HttpStatus.OK).body(update.getFullFriendRequest());
-            } else {
+            } else if (turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
+                TurtleRequestEntity update = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
+                if (Objects.equals(update.getStatus(), "cancel")) {
+                    update.setStatus("pending");
+                    update.setRequester(requester.get().getSocialHub());
+                    update.setRequested(requested.get().getSocialHub());
+                    update.setLastActor(requester.get().getSocialHub());
+                    turtleRequestRepository.save(update);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(update.getFullFriendRequest());
+            }else {
                 turtleRequestRepository.save(new TurtleRequestEntity(requestDTO.getStatus(), requester.get().getSocialHub(), requested.get().getSocialHub(), requester.get().getSocialHub()));
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("added", "success"));
             }
@@ -170,6 +185,8 @@ public class SocialController {
                  * saveUser
                  *
                  * */
+
+                /** Make the Accept and Delcine handling here */
 
                 if (Objects.equals(requestDTO.getStatus(), "cancel")) {
                     if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub())) {

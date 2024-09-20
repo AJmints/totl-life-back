@@ -20,11 +20,13 @@ public class TurtleRequestEntity {
 
     private Calendar dateCreated;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "requester", referencedColumnName = "id")
     @JsonIgnore
     private SocialUserHubEntity requester;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "requested", referencedColumnName = "id")
     @JsonIgnore
