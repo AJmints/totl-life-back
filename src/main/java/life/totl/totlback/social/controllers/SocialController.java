@@ -127,11 +127,25 @@ public class SocialController {
                     update.setRequested(requested.get().getSocialHub());
                     update.setLastActor(requester.get().getSocialHub());
                     turtleRequestRepository.save(update);
+                } else if (Objects.equals(update.getStatus(), "decline")) {
+                    // This situation might not ever happen, in which case, this is a block that can be removed.
+                    update.setStatus("pending");
+                    update.setRequester(requester.get().getSocialHub());
+                    update.setRequested(requested.get().getSocialHub());
+                    update.setLastActor(requester.get().getSocialHub());
+                    turtleRequestRepository.save(update);
                 }
                 return ResponseEntity.status(HttpStatus.OK).body(update.getFullFriendRequest());
             } else if (turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
                 TurtleRequestEntity update = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
                 if (Objects.equals(update.getStatus(), "cancel")) {
+
+                    update.setStatus("pending");
+                    update.setRequester(requester.get().getSocialHub());
+                    update.setRequested(requested.get().getSocialHub());
+                    update.setLastActor(requester.get().getSocialHub());
+                    turtleRequestRepository.save(update);
+                } else if (Objects.equals(update.getStatus(), "decline")) {
                     update.setStatus("pending");
                     update.setRequester(requester.get().getSocialHub());
                     update.setRequested(requested.get().getSocialHub());
@@ -188,20 +202,19 @@ public class SocialController {
 
                 /** Make the Accept and Delcine handling here */
 
-                if (Objects.equals(requestDTO.getStatus(), "cancel")) {
+                if (Objects.equals(requestDTO.getStatus(), "cancel") || Objects.equals(requestDTO.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "decline")) {
                     if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub())) {
 
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub());
-                        request.setStatus("cancel");
+                        request.setStatus(requestDTO.getStatus());
                         request.setLastActor(requester.get().getSocialHub());
                         turtleRequestRepository.save(request);
-
                         return ResponseEntity.status(HttpStatus.OK).body(request.getFullFriendRequest());
 
                     } else if (turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
 
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
-                        request.setStatus("cancel");
+                        request.setStatus(requestDTO.getStatus());
                         request.setLastActor(requester.get().getSocialHub());
                         turtleRequestRepository.save(request);
                         return ResponseEntity.status(HttpStatus.OK).body(request.getFullFriendRequest());
