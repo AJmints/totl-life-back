@@ -60,4 +60,6 @@ public class TurtleRequestEntity {
         return details;
     }
 
+    //Make a method to return the UserTurtleReqeustActionDTO
+
 }
