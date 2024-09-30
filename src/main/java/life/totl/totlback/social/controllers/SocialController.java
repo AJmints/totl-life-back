@@ -57,8 +57,8 @@ public class SocialController {
         return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
-    @GetMapping(value = "/user-friend-list/{userid}/{callType}")
-    public ResponseEntity<?> usersFriendList(@RequestHeader("auth-token") String token, @PathVariable("userid") long userId, @PathVariable("callType") String usersView) {
+    @GetMapping(value = "/user-friend-list/{userName}/{callType}")
+    public ResponseEntity<?> usersFriendList(@RequestHeader("auth-token") String token, @PathVariable("userName") String userName, @PathVariable("callType") String usersView) {
         try {
             if (!jwtGenerator.validateToken(token.substring(7, token.length()))) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -67,12 +67,13 @@ public class SocialController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
 
-        Optional<UserEntity> user = userEntityRepository.findById(userId);
-        List<FriendListDTO> userFriends = user.get().getSocialHub().getUsersFriendList();
+        UserEntity user = userEntityRepository.findByUserName(userName);
+        System.out.println(user.getUserName());
+        List<FriendListDTO> userFriends = user.getSocialHub().getUsersFriendList();
 
         if (Objects.equals(usersView, "1")) {
 
-            List<TurtleRequestEntity> turtleRequest = turtleRequestRepository.findAllByRequested(user.get().getSocialHub());
+            List<TurtleRequestEntity> turtleRequest = turtleRequestRepository.findAllByRequested(user.getSocialHub());
             List<UserTurtleRequestActionDTO> turtleResponse = new ArrayList<>();
 
             for (TurtleRequestEntity name : turtleRequest) {
@@ -225,6 +226,11 @@ public class SocialController {
                     if (turtleRequestRepository.existsByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub())) {
 
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub());
+
+                        if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(request.getStatus(), "decline")) {
+                            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
+                        }
+
                         request.setStatus(requestDTO.getStatus());
                         request.setLastActor(requester.get().getSocialHub());
                         turtleRequestRepository.save(request);
@@ -246,6 +252,11 @@ public class SocialController {
                     } else if (turtleRequestRepository.existsByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub())) {
 
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
+
+                        if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(request.getStatus(), "decline")) {
+                            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
+                        }
+
                         request.setStatus(requestDTO.getStatus());
                         request.setLastActor(requester.get().getSocialHub());
                         turtleRequestRepository.save(request);
