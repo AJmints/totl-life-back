@@ -127,6 +127,10 @@ public class SocialController {
         }
     }
 
+    // Bring in 2 emtpy spring boot projs, 1 will be producer, 2nd is consumer. Producer will send message over Kafka to Consumer, and comsumer will print message from producer.
+    // cannot use controller or api to send message - challenge.
+    // can use rest api on producer app to enter the message I want to send
+
     @PostMapping(value = "/request-friend")
     public ResponseEntity<?> requestFriend(@RequestHeader("auth-token") String token, @RequestBody FriendRequestDTO requestDTO) {
         try {
