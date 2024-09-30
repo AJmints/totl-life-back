@@ -68,7 +68,6 @@ public class SocialController {
         }
 
         UserEntity user = userEntityRepository.findByUserName(userName);
-        System.out.println(user.getUserName());
         List<FriendListDTO> userFriends = user.getSocialHub().getUsersFriendList();
 
         if (Objects.equals(usersView, "1")) {
@@ -229,6 +228,8 @@ public class SocialController {
 
                         if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(request.getStatus(), "decline")) {
                             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
+                        } else if (Objects.equals(request.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "decline")) {
+                            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
                         }
 
                         request.setStatus(requestDTO.getStatus());
@@ -254,6 +255,8 @@ public class SocialController {
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
 
                         if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(request.getStatus(), "decline")) {
+                            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
+                        } else if (Objects.equals(request.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "decline")) {
                             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
                         }
 
