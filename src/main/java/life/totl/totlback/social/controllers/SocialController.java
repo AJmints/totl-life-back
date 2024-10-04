@@ -226,9 +226,9 @@ public class SocialController {
 
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requester.get().getSocialHub(), requested.get().getSocialHub());
 
-                        if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(request.getStatus(), "decline")) {
+                        if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "decline")) {
                             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
-                        } else if (Objects.equals(request.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "decline")) {
+                        } else if (Objects.equals(request.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "decline")) {
                             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
                         }
 
@@ -254,9 +254,9 @@ public class SocialController {
 
                         TurtleRequestEntity request = turtleRequestRepository.findByRequesterAndRequested(requested.get().getSocialHub(), requester.get().getSocialHub());
 
-                        if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept") || Objects.equals(request.getStatus(), "decline")) {
+                        if (Objects.equals(requestDTO.getStatus(), "cancel") && Objects.equals(request.getStatus(), "accept")) {
                             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
-                        } else if (Objects.equals(request.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "accept") || Objects.equals(requestDTO.getStatus(), "decline")) {
+                        } else if (Objects.equals(request.getStatus(), "cancel") && Objects.equals(requestDTO.getStatus(), "accept")) {
                             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
                         }
 
@@ -279,6 +279,7 @@ public class SocialController {
                         return ResponseEntity.status(HttpStatus.OK).body(request.getFullFriendRequest());
                     } else {
 
+                        System.out.println("Oh no");
                         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "empty"));
 
                     }
