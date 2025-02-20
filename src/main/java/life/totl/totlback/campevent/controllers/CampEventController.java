@@ -26,15 +26,36 @@ public class CampEventController {
     }
 
     @PostMapping(value = "/createEvent")
-    public ResponseEntity<?> getUserPackConfigs(@RequestHeader("auth-token") String token,@RequestBody Object packConfigDTO) {
-        try {
-            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(packConfigDTO);
+    public ResponseEntity<?> createUserEvent(@RequestHeader("auth-token") String token,@RequestBody Object packConfigDTO) {
+//        try {
+//            if (!jwtGenerator.validateToken(token.substring(7, token.length()))){
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+//        }
 
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(packConfigDTO);
     }
+
+    @GetMapping(value = "/getUserEvent/{user}/{eventId}")
+    public ResponseEntity<?> getUserEvent() {
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("getUserEvent"));
+    }
+
+    @GetMapping(value = "/getAllRelevantEvents/{user}")
+    public ResponseEntity<?> getAllRelevantEvents() {
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("getAllRelevantEvents"));
+    }
+
+    @DeleteMapping(value = "/deleteUsersEvent/{user}/{eventId}")
+    public ResponseEntity<?> deleteUsersEvent(@RequestHeader("auth-token") String token) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("deleteUsersEvent"));
+    }
+
 }

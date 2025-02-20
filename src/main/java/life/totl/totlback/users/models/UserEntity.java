@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import life.totl.totlback.backpack.models.BackPackEntity;
+import life.totl.totlback.campevent.models.CampEventsRelatedToUserEntity;
 import life.totl.totlback.logs.models.LogsEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import life.totl.totlback.social.models.SocialUserHubEntity;
@@ -49,6 +50,10 @@ public class UserEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_backpack", referencedColumnName = "id")
     private BackPackEntity userBackPack;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_campevents", referencedColumnName = "id")
+    private CampEventsRelatedToUserEntity campEventsRelatedToUser;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_social_hub", referencedColumnName = "id")

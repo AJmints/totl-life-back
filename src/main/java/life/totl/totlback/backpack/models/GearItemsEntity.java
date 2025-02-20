@@ -2,7 +2,7 @@ package life.totl.totlback.backpack.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import life.totl.totlback.backpack.models.dtos.GearItemDTO;
+import life.totl.totlback.campevent.models.ItemRecEntity;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +16,9 @@ public class GearItemsEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "gearItem")
     private List<UserSpecificGearEntity> userLink;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "gearRec")
+    private List<ItemRecEntity> gearRecLink;
+
     @Column(columnDefinition = "VARCHAR(50) NOT NULL")
     private String category; // tent / hammock / sleeping bag / sleeping pad / fridge / cooler / solar panel / battery / tool / shower / stove / tarp / cookware / water filter / clothing / consumable / seating / hammock / backpack / Water Proof Dry Bag
     @Column(columnDefinition = "VARCHAR(50) NOT NULL")

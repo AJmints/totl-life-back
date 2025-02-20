@@ -1,34 +1,64 @@
 package life.totl.totlback.campevent.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@Getter
+@Setter
 public class CampEventEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // private UserEventsEntity createdByUser;
-    // Private Date createDate;
+    @ManyToMany(mappedBy = "relatedCampEvents")
+    private List<CampEventsRelatedToUserEntity> eventConnections;
 
-    // private String eventName;
-    // private boolean isPrivate;
-    // private String or Date startDate + startTime;
-    // private String or Date endDate + endTime;
-    // private String parkState;
-    // private String addressString;
-    // private String parkName;
-    // private String parkLat;
-    // private String parkLong;
-    // private String eventDetails;
+    @ManyToOne
+    @JoinColumn(name = "user_made_campevents", referencedColumnName = "id")
+    @JsonIgnore
+    private CampEventsRelatedToUserEntity createBy;
+    private Date createDate;
 
-    // @OneToMany ( Create DataBase for Saving Park Details to eventually populate list on front end)
-    // private CampParkDetailEntity campParkDetails;
+    private String eventName;
+    private Boolean isPrivate;
+    private String startDate;
+    private String startTime;
+    private Date eventStart;
+    private String endDate;
+    private String endTime;
+    private Date eventEnd;
+    private String eventDetails;
 
+    private String state;
+    private String parkName;
+    private String parkAddress;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "park_campground_detail", referencedColumnName = "id")
+    private ParkDetailEntity campGround;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "eventGearRec")
+    private List<ItemRecEntity> gearRecItems;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "eventMealRec")
+    private List<MealRecEntity> eventMeals;
+    @ManyToMany
+    @JoinTable(
+            name = "invited_events",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "invited_event_id"))
+    private List<CampEventsRelatedToUserEntity> inviteList;
+
+    public CampEventEntity() {
+    }
 
 
 }
