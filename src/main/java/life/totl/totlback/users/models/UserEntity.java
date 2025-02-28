@@ -72,6 +72,15 @@ public class UserEntity {
         this.userPFP = new ProfilePictureEntity();
         this.userBackPack = new BackPackEntity(this);
         this.socialHub = new SocialUserHubEntity(this);
+        this.campEventsRelatedToUser = new CampEventsRelatedToUserEntity(this);
+    }
+
+    public CampEventsRelatedToUserEntity getCampEventsRelatedToUser() {
+        return campEventsRelatedToUser;
+    }
+
+    public void setCampEventsRelatedToUser(CampEventsRelatedToUserEntity campEventsRelatedToUser) {
+        this.campEventsRelatedToUser = campEventsRelatedToUser;
     }
 
     public SocialUserHubEntity getSocialHub() {

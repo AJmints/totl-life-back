@@ -60,5 +60,24 @@ public class CampEventEntity {
     public CampEventEntity() {
     }
 
-
+    public CampEventEntity(CampEventsRelatedToUserEntity createBy, Date createDate, String eventName, List<CampEventsRelatedToUserEntity> inviteList, List<MealRecEntity> eventMeals, List<ItemRecEntity> gearRecItems, ParkDetailEntity campGround, String parkAddress, String parkName, String state, String eventDetails, Date eventEnd, String endTime, String endDate, Date eventStart, String startTime, String startDate, Boolean isPrivate) {
+        this.createBy = createBy;
+        this.createDate = createDate;
+        this.eventName = eventName;
+        this.inviteList = inviteList;
+        this.eventMeals = eventMeals;
+        this.gearRecItems = gearRecItems;
+        this.campGround = campGround;
+        this.parkAddress = parkAddress;
+        this.parkName = parkName;
+        this.state = state;
+        this.eventDetails = eventDetails;
+        this.eventEnd = eventEnd;
+        this.endTime = endTime;
+        this.endDate = endDate;
+        this.eventStart = eventStart;
+        this.startTime = startTime;
+        this.startDate = startDate;
+        this.isPrivate = isPrivate;
+    }
 }

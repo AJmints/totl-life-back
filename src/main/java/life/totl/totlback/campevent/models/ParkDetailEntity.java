@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "park_detail")
-@AllArgsConstructor
 @Getter
 @Setter
 public class ParkDetailEntity {
@@ -33,19 +32,42 @@ public class ParkDetailEntity {
     private String addrZip;
 
     // Amenities
-    private Boolean trashRecyclingCollection;
+    private String trashRecyclingCollection;
     private Boolean toilets;
-    private Boolean internetConnectivity;
+    private String internetConnectivity;
     private Boolean showers;
-    private Boolean cellReception;
-    private Boolean laundry;
-    private Boolean campStore;
-    private Boolean staffOnsite;
-    private Boolean iceAvailable;
-    private Boolean fireWoodAvailable;
+    private String cellReception;
+    private String laundry;
+    private String campStore;
+    private String staffOnsite;
+    private String iceAvailable;
+    private String fireWoodAvailable;
 
     public ParkDetailEntity() {
 
     }
 
+    public ParkDetailEntity(String parkName, String addressString, String parkGovID, String parkURL, String latitude, String longitude, String addrLine1, String addrLine2, String addrCity, String addrState, String addrZip, String trashRecyclingCollection, Boolean toilets, String internetConnectivity, Boolean showers, String cellReception, String laundry, String campStore, String staffOnsite, String iceAvailable, String fireWoodAvailable) {
+        this.parkName = parkName;
+        this.addressString = addressString;
+        this.parkGovID = parkGovID;
+        this.parkURL = parkURL;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.addrLine1 = addrLine1;
+        this.addrLine2 = addrLine2;
+        this.addrCity = addrCity;
+        this.addrState = addrState;
+        this.addrZip = addrZip;
+        this.trashRecyclingCollection = trashRecyclingCollection;
+        this.toilets = toilets;
+        this.internetConnectivity = internetConnectivity;
+        this.showers = showers;
+        this.cellReception = cellReception;
+        this.laundry = laundry;
+        this.campStore = campStore;
+        this.staffOnsite = staffOnsite;
+        this.iceAvailable = iceAvailable;
+        this.fireWoodAvailable = fireWoodAvailable;
+    }
 }

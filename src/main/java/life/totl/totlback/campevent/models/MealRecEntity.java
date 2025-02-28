@@ -27,8 +27,16 @@ public class MealRecEntity {
     @JoinColumn(name = "base_meal_obj_id", referencedColumnName = "id")
     private MealBaseEntity mealEntry;
 
+    private Integer sequenceId;
     private String userNotes;
 
+
     public MealRecEntity() {
+    }
+
+    public MealRecEntity(MealBaseEntity mealBaseEntity, String userNotes, Integer sequenceId) {
+        this.mealEntry = mealBaseEntity;
+        this.userNotes = userNotes;
+        this.sequenceId = sequenceId;
     }
 }

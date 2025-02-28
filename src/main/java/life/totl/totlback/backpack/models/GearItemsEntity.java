@@ -64,7 +64,7 @@ public class GearItemsEntity {
     }
 
     public GearItemsEntity(String category, String brand, String type) {
-        /** DryBag Constructor */
+        /** DryBag Constructor / GearRecItem Constructor */
         this.category = category;
         this.brand = brand;
         this.type = type;

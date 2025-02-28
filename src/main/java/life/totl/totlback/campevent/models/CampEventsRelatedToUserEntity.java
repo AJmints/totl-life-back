@@ -2,11 +2,16 @@ package life.totl.totlback.campevent.models;
 
 import jakarta.persistence.*;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
+import life.totl.totlback.social.models.dtos.FriendListDTO;
+import life.totl.totlback.users.models.ProfilePictureEntity;
 import life.totl.totlback.users.models.UserEntity;
+import life.totl.totlback.users.utils.ImageUtility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -37,5 +42,9 @@ public class CampEventsRelatedToUserEntity {
     private List<CampEventEntity> memberOfTheseEvents;
 
     public CampEventsRelatedToUserEntity() {
+    }
+
+    public CampEventsRelatedToUserEntity(UserEntity user) {
+        this.user = user;
     }
 }

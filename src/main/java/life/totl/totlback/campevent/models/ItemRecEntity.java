@@ -26,6 +26,7 @@ public class ItemRecEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "gear_item_id", referencedColumnName = "id")
+    @JsonIgnore
     private GearItemsEntity gearRec; // Handles Gear Type and Category
 
     private String groupType;
@@ -33,5 +34,11 @@ public class ItemRecEntity {
 
     public ItemRecEntity() {
 
+    }
+
+    public ItemRecEntity(GearItemsEntity gearRec, String groupType, Integer count) {
+        this.gearRec = gearRec;
+        this.groupType = groupType;
+        this.count = count;
     }
 }
