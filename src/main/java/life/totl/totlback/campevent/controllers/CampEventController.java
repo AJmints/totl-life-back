@@ -106,6 +106,7 @@ public class CampEventController {
                         ,newEventDTO.getEventDetails().getCampGround().amenities.staffOrVolunteerHostOnsite
                         ,newEventDTO.getEventDetails().getCampGround().amenities.iceAvailableForSale
                         ,newEventDTO.getEventDetails().getCampGround().amenities.firewoodForSale);
+                parkDetailEntityRepository.save(parkDetail);
             }
 
             for (FoodRecDTO item : newEventDTO.getMealPlan()) {
@@ -175,7 +176,7 @@ public class CampEventController {
             campEventsRelatedToUserEntityRepository.save(ownerOfEvent.get());
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("Failed", "Something went wrong saving this event. Please try again later"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
         return ResponseEntity.status(HttpStatus.OK).body("success");

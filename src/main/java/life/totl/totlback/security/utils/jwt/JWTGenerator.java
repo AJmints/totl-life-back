@@ -57,9 +57,9 @@ public class JWTGenerator {
     }
 
     public boolean validateToken(String token) {
-        if (Objects.equals(token, environment.getJWT_SECRET())) {
-            return true;
-        }
+//        if (Objects.equals(token, environment.getJWT_SECRET())) {
+//            return true;
+//        }
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(token);
             return true;
