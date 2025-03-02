@@ -73,6 +73,7 @@ public class GearItemsEntity {
         this.extraInfo = "";
         this.powerSource = "";
         this.rating = "";
+        this.storage = "";
     }
 
     public long getId() {
@@ -192,4 +193,5 @@ public class GearItemsEntity {
     }
 
     public void removeGearItemsEntity(UserSpecificGearEntity remove) { userLink.remove(remove); }
+    public void removeGearItemsEntity(ItemRecEntity remove) {gearRecLink.remove(remove); }
 }

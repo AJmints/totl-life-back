@@ -1,12 +1,17 @@
 package life.totl.totlback.campevent.models;
 
 import jakarta.persistence.*;
+import life.totl.totlback.backpack.models.UserSpecificGearEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "park_detail")
+@AllArgsConstructor
 @Getter
 @Setter
 public class ParkDetailEntity {
@@ -15,8 +20,8 @@ public class ParkDetailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne(mappedBy = "campGround")
-    private CampEventEntity relatedCampEvent;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "campGround")
+    private List<CampEventEntity> relatedCampEvent;
 
     @Column(columnDefinition = "VARCHAR(100)", nullable = false)
     private String parkName;
@@ -70,4 +75,6 @@ public class ParkDetailEntity {
         this.iceAvailable = iceAvailable;
         this.fireWoodAvailable = fireWoodAvailable;
     }
+
+    public void removeParkDetailEntity(CampEventEntity remove) { relatedCampEvent.remove(remove); }
 }

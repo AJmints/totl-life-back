@@ -31,8 +31,8 @@ public class CampEventsRelatedToUserEntity {
     @ManyToMany
     @JoinTable(
             name = "campevents_relations",
-            joinColumns = @JoinColumn(name = "campevent_id"),
-            inverseJoinColumns = @JoinColumn(name = "related_campevents_id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_connections_id"))
      private List<CampEventEntity> relatedCampEvents;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "createBy")

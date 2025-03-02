@@ -18,7 +18,7 @@ public class MealRecEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     @JsonIgnore
     private CampEventEntity eventMealRec;

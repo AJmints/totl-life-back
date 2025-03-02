@@ -41,4 +41,7 @@ public class ItemRecEntity {
         this.groupType = groupType;
         this.count = count;
     }
+
+    @PreRemove
+    private void removeItemRecEntity() {this.gearRec.removeGearItemsEntity(this);}
 }

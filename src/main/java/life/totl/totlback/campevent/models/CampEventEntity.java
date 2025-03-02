@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -32,18 +33,20 @@ public class CampEventEntity {
     private Boolean isPrivate;
     private String startDate;
     private String startTime;
-    private Date eventStart;
+    private LocalDateTime eventStart;
     private String endDate;
     private String endTime;
-    private Date eventEnd;
+    private LocalDateTime eventEnd;
+    @Column(columnDefinition = "VARCHAR(6000)")
     private String eventDetails;
 
     private String state;
     private String parkName;
     private String parkAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "park_campground_detail", referencedColumnName = "id")
+    @JsonIgnore
     private ParkDetailEntity campGround;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "eventGearRec")
@@ -52,22 +55,21 @@ public class CampEventEntity {
     private List<MealRecEntity> eventMeals;
     @ManyToMany
     @JoinTable(
-            name = "invited_events",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "invited_event_id"))
+            name = "events_guest_list",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<CampEventsRelatedToUserEntity> inviteList;
 
     public CampEventEntity() {
     }
 
-    public CampEventEntity(CampEventsRelatedToUserEntity createBy, Date createDate, String eventName, List<CampEventsRelatedToUserEntity> inviteList, List<MealRecEntity> eventMeals, List<ItemRecEntity> gearRecItems, ParkDetailEntity campGround, String parkAddress, String parkName, String state, String eventDetails, Date eventEnd, String endTime, String endDate, Date eventStart, String startTime, String startDate, Boolean isPrivate) {
+    public CampEventEntity(CampEventsRelatedToUserEntity createBy, Date createDate, String eventName, List<CampEventsRelatedToUserEntity> inviteList, List<MealRecEntity> eventMeals, List<ItemRecEntity> gearRecItems, String parkAddress, String parkName, String state, String eventDetails, LocalDateTime eventEnd, String endTime, String endDate, LocalDateTime eventStart, String startTime, String startDate, Boolean isPrivate, ParkDetailEntity parkDetail) {
         this.createBy = createBy;
         this.createDate = createDate;
         this.eventName = eventName;
         this.inviteList = inviteList;
         this.eventMeals = eventMeals;
         this.gearRecItems = gearRecItems;
-        this.campGround = campGround;
         this.parkAddress = parkAddress;
         this.parkName = parkName;
         this.state = state;
@@ -79,5 +81,11 @@ public class CampEventEntity {
         this.startTime = startTime;
         this.startDate = startDate;
         this.isPrivate = isPrivate;
+        this.campGround = parkDetail;
+    }
+
+    @PreRemove
+    private void removeParkDetailEntity() {
+        this.campGround.removeParkDetailEntity(this);
     }
 }
