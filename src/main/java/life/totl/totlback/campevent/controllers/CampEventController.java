@@ -179,7 +179,7 @@ public class CampEventController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("success");
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "The event posted successfully!"));
     }
 
     @GetMapping(value = "/getUserEvent/{user}/{eventId}")
