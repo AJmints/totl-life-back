@@ -51,7 +51,7 @@ public class UserEntity {
     @JoinColumn(name = "user_backpack", referencedColumnName = "id")
     private BackPackEntity userBackPack;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_campevents", referencedColumnName = "id")
     private CampEventsRelatedToUserEntity campEventsRelatedToUser;
 

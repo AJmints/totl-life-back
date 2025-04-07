@@ -6,6 +6,8 @@ import life.totl.totlback.backpack.models.BackPackEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "day_meal_rec")
@@ -19,11 +21,13 @@ public class MealRecEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     @JsonIgnore
     private CampEventEntity eventMealRec;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "base_meal_obj_id", referencedColumnName = "id")
     private MealBaseEntity mealEntry;
 

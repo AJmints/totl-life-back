@@ -6,6 +6,7 @@ import life.totl.totlback.campevent.models.*;
 import life.totl.totlback.campevent.models.dtos.CreateNewEventDTO;
 import life.totl.totlback.campevent.models.dtos.FoodRecDTO;
 import life.totl.totlback.campevent.models.dtos.ItemRecDTO;
+import life.totl.totlback.campevent.models.dtos.QuickEventCard;
 import life.totl.totlback.campevent.repository.*;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.UserEntity;
@@ -145,6 +146,7 @@ public class CampEventController {
             }
 
             CampEventEntity event = new CampEventEntity(ownerOfEvent.get(),
+                                                        newEventDTO.getEventDetails().getEventType(),
                                                         new Date(System.currentTimeMillis()),
                                                         newEventDTO.getEventDetails().getEventName(),
                                                         eventInvites,
@@ -182,20 +184,41 @@ public class CampEventController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("success", "The event posted successfully!"));
     }
 
-    @GetMapping(value = "/getUserEvent/{user}/{eventId}")
-    public ResponseEntity<?> getUserEvent() {
+    @GetMapping(value = "/getSpecificEvent/{eventId}")
+    public ResponseEntity<?> getSpecificEvent(@PathVariable("eventId") Long eventId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("getUserEvent"));
     }
 
     @GetMapping(value = "/getAllRelevantEvents/{user}")
-    public ResponseEntity<?> getAllRelevantEvents() {
+    public ResponseEntity<?> getAllRelevantEvents(@PathVariable("user") String userName) {
+        Optional<UserEntity> user = Optional.ofNullable(userEntityRepository.findByUserName(userName));
+        if (user.isPresent()) {
+            List<QuickEventCard> userCards = new ArrayList<>();
+            for (CampEventEntity card : campEventEntityRepository.findAll()) {
+                if (user.get().getCampEventsRelatedToUser().equals(card.getCreateBy()) || card.getInviteList().contains(user.get().getCampEventsRelatedToUser())) {
+                    Optional<CampEventsRelatedToUserEntity> attempt = campEventsRelatedToUserEntityRepository.findById(card.getCreateBy().getId());
+                    if (attempt.isPresent()) {
+                        QuickEventCard set = card.quickList();
+                        set.setHost(attempt.get().getUser().getUserName());
+                        userCards.add(set);
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(userCards);
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("getAllRelevantEvents"));
+        List<Object> relatedEventsBatchOfTen;
+        List<Object> userEventsBatchOfTen;
+
+        // Make class to hold 2 arrayList to send to the front. Program on the class to get a summery for the event card for the front end.
+        // Need: Event Type (Need to add to CampEventEntity), Event Name, Hosted by, date range, number of people going
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(userName));
     }
 
-    @DeleteMapping(value = "/deleteUsersEvent/{user}/{eventId}")
-    public ResponseEntity<?> deleteUsersEvent(@RequestHeader("auth-token") String token) {
+    @DeleteMapping(value = "/removeUserFromEvent/{user}/{eventId}")
+    public ResponseEntity<?> removeUserFromEvent(@RequestHeader("auth-token") String token, @PathVariable("user") String userName, @PathVariable("eventId") String id) {
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("deleteUsersEvent"));
     }

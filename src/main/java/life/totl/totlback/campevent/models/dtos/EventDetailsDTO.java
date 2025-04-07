@@ -12,6 +12,7 @@ import java.util.Date;
 public class EventDetailsDTO {
 
     private String eventName;
+    private String eventType;
     private Boolean isPrivate;
     private String startDate;
     private String startTime;

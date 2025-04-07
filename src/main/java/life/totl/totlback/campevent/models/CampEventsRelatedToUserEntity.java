@@ -9,6 +9,8 @@ import life.totl.totlback.users.utils.ImageUtility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ public class CampEventsRelatedToUserEntity {
     private UserEntity user;
 
     @ManyToMany
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
             name = "campevents_relations",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -36,9 +39,11 @@ public class CampEventsRelatedToUserEntity {
      private List<CampEventEntity> relatedCampEvents;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "createBy")
+    @Fetch(FetchMode.SELECT)
     private List<CampEventEntity> userMadeCampEvents;
 
     @ManyToMany(mappedBy = "inviteList")
+    @Fetch(FetchMode.SELECT)
     private List<CampEventEntity> memberOfTheseEvents;
 
     public CampEventsRelatedToUserEntity() {

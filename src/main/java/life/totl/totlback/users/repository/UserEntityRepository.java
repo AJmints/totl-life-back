@@ -1,5 +1,6 @@
 package life.totl.totlback.users.repository;
 
+import life.totl.totlback.campevent.models.CampEventsRelatedToUserEntity;
 import life.totl.totlback.logs.models.UserLogsBalesEntity;
 import life.totl.totlback.users.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
