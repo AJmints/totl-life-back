@@ -2,7 +2,7 @@ package life.totl.totlback.campevent.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import life.totl.totlback.campevent.models.dtos.QuickEventCard;
+import life.totl.totlback.campevent.models.dtos.modelhelpers.QuickEventCard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +25,7 @@ public class CampEventEntity {
 
     @ManyToMany(mappedBy = "relatedCampEvents")
     @Fetch(FetchMode.SELECT)
+    @JsonIgnore
     private List<CampEventsRelatedToUserEntity> eventConnections;
 
     @ManyToOne
@@ -64,6 +65,7 @@ public class CampEventEntity {
     private List<MealRecEntity> eventMeals;
     @ManyToMany
     @Fetch(FetchMode.SELECT)
+    @JsonIgnore
     @JoinTable(
             name = "events_guest_list",
             joinColumns = @JoinColumn(name = "event_id"),
@@ -102,5 +104,10 @@ public class CampEventEntity {
 
     public QuickEventCard quickList() {
         return new QuickEventCard(this.eventName, this.startDate + "/" +this.endDate, this.getInviteList().size(), this.eventType, this.id);
+    }
+
+    public String viewCreatorOfEvent() {
+        String name = this.createBy.getUser().getUserName();
+        return name;
     }
 }

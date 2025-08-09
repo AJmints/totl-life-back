@@ -1,6 +1,5 @@
-package life.totl.totlback.campevent.models.dtos;
+package life.totl.totlback.campevent.models.dtos.modelhelpers;
 
-import life.totl.totlback.campevent.models.CampEventsRelatedToUserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

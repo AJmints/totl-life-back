@@ -6,7 +6,9 @@ import life.totl.totlback.campevent.models.*;
 import life.totl.totlback.campevent.models.dtos.CreateNewEventDTO;
 import life.totl.totlback.campevent.models.dtos.FoodRecDTO;
 import life.totl.totlback.campevent.models.dtos.ItemRecDTO;
-import life.totl.totlback.campevent.models.dtos.QuickEventCard;
+import life.totl.totlback.campevent.models.dtos.modelhelpers.QuickEventCard;
+import life.totl.totlback.campevent.models.dtos.responses.InviteListEventResponseDTO;
+import life.totl.totlback.campevent.models.dtos.responses.SpecificEventResponseDTO;
 import life.totl.totlback.campevent.repository.*;
 import life.totl.totlback.security.utils.jwt.JWTGenerator;
 import life.totl.totlback.users.models.UserEntity;
@@ -17,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -187,11 +188,52 @@ public class CampEventController {
     @GetMapping(value = "/getSpecificEvent/{eventId}")
     public ResponseEntity<?> getSpecificEvent(@PathVariable("eventId") Long eventId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("getUserEvent"));
+        Optional<CampEventEntity> view = campEventEntityRepository.findById(eventId);
+        SpecificEventResponseDTO theEvent;
+
+        if (view.isPresent()) {
+
+            theEvent = new SpecificEventResponseDTO(
+                    view.get().getId(),
+                    view.get().viewCreatorOfEvent(),
+                    view.get().getCreateDate(),
+                    view.get().getEventName(),
+                    view.get().getIsPrivate(),
+                    view.get().getEventType(),
+                    view.get().getStartDate(),
+                    view.get().getParkAddress(),
+                    view.get().getParkName(),
+                    view.get().getState(),
+                    view.get().getEventDetails(),
+                    view.get().getEventEnd(),
+                    view.get().getEndTime(),
+                    view.get().getEndDate(),
+                    view.get().getEventStart(),
+                    view.get().getStartTime()
+
+            );
+
+            List<InviteListEventResponseDTO> inviteList = new ArrayList<>();
+            for (CampEventsRelatedToUserEntity item : view.get().getInviteList()) {
+                InviteListEventResponseDTO create = item.getInviteListEventResponseDTO();
+                inviteList.add(create);
+            }
+            theEvent.setInviteList(inviteList);
+            theEvent.setEventMeals(view.get().getEventMeals());
+            theEvent.setGearRecItems(view.get().getGearRecItems());
+
+            return ResponseEntity.status(HttpStatus.OK).body(theEvent);
+
+        }
+
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(view);
     }
 
     @GetMapping(value = "/getAllRelevantEvents/{user}")
     public ResponseEntity<?> getAllRelevantEvents(@PathVariable("user") String userName) {
+
         Optional<UserEntity> user = Optional.ofNullable(userEntityRepository.findByUserName(userName));
         if (user.isPresent()) {
             List<QuickEventCard> userCards = new ArrayList<>();
@@ -207,12 +249,6 @@ public class CampEventController {
             }
             return ResponseEntity.status(HttpStatus.OK).body(userCards);
         }
-
-        List<Object> relatedEventsBatchOfTen;
-        List<Object> userEventsBatchOfTen;
-
-        // Make class to hold 2 arrayList to send to the front. Program on the class to get a summery for the event card for the front end.
-        // Need: Event Type (Need to add to CampEventEntity), Event Name, Hosted by, date range, number of people going
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(userName));
     }
