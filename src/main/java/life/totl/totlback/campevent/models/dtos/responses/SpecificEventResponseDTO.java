@@ -38,9 +38,9 @@ public class SpecificEventResponseDTO {
 
     private ParkDetailEntity ParkDetail; // placeholder, make new dto for ParkDetailEntity
 
-    private List<InviteListEventResponseDTO> inviteList; // done
+    private List<InviteListEventResponseDTO> inviteList = new ArrayList<>(); // done
 
-    private List<ItemRecEntity> gearRecItems;
+    private List<EventItemRecDetailResponsDTO> gearRecItems = new ArrayList<>();
 
     private List<MealRecEntity> eventMeals = new ArrayList<>();
 

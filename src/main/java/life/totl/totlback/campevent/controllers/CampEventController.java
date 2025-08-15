@@ -1,12 +1,14 @@
 package life.totl.totlback.campevent.controllers;
 
 import life.totl.totlback.backpack.models.GearItemsEntity;
+import life.totl.totlback.backpack.models.dtos.response.ItemRecDetailsEventResponseDTO;
 import life.totl.totlback.backpack.repository.GearItemsEntityRepository;
 import life.totl.totlback.campevent.models.*;
 import life.totl.totlback.campevent.models.dtos.CreateNewEventDTO;
 import life.totl.totlback.campevent.models.dtos.FoodRecDTO;
 import life.totl.totlback.campevent.models.dtos.ItemRecDTO;
 import life.totl.totlback.campevent.models.dtos.modelhelpers.QuickEventCard;
+import life.totl.totlback.campevent.models.dtos.responses.EventItemRecDetailResponsDTO;
 import life.totl.totlback.campevent.models.dtos.responses.InviteListEventResponseDTO;
 import life.totl.totlback.campevent.models.dtos.responses.SpecificEventResponseDTO;
 import life.totl.totlback.campevent.repository.*;
@@ -218,9 +220,15 @@ public class CampEventController {
                 InviteListEventResponseDTO create = item.getInviteListEventResponseDTO();
                 inviteList.add(create);
             }
+            List<EventItemRecDetailResponsDTO> gearRecList = new ArrayList<>();
+            for (ItemRecEntity item : view.get().getGearRecItems()) {
+                ItemRecDetailsEventResponseDTO itemRecDetail = item.getGearRec().getItemRecDetail();
+                EventItemRecDetailResponsDTO itemRec = new EventItemRecDetailResponsDTO(item.getId(),item.getCount(), itemRecDetail);
+                gearRecList.add(itemRec);
+            }
             theEvent.setInviteList(inviteList);
             theEvent.setEventMeals(view.get().getEventMeals());
-            theEvent.setGearRecItems(view.get().getGearRecItems());
+            theEvent.setGearRecItems(gearRecList);
 
             return ResponseEntity.status(HttpStatus.OK).body(theEvent);
 

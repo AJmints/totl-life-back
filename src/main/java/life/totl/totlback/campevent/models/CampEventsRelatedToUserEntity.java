@@ -56,16 +56,7 @@ public class CampEventsRelatedToUserEntity {
     }
 
     public InviteListEventResponseDTO getInviteListEventResponseDTO() {
-//        List<InviteListEventResponseDTO> userEventInviteDetails = new ArrayList<>();
-//        for (LogsEntity logs : this.userLogsBalesEntity.getLogsEntities()) {
-//            if (logs.getLogOwner().getUser() == this) {
-//                userMadeLogs.add(logs.getLogName());
-//            }
-//        }
-
-        InviteListEventResponseDTO userEventInviteDetails = new InviteListEventResponseDTO(this.user.getId(),this.user.getUserName(),this.user.getUserPFP().getImage(),this.user.isAccountVerified(), this.getUserMadeCampEvents().size());
-
-        return userEventInviteDetails;
+        return new InviteListEventResponseDTO(this.user.getId(), this.user.getUserName(), ImageUtility.decompressImage(this.user.getUserPFP().getImage()), this.user.isAccountVerified(), this.getUserMadeCampEvents().size());
     }
 
 }

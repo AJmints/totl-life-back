@@ -107,7 +107,6 @@ public class CampEventEntity {
     }
 
     public String viewCreatorOfEvent() {
-        String name = this.createBy.getUser().getUserName();
-        return name;
+        return this.createBy.getUser().getUserName();
     }
 }

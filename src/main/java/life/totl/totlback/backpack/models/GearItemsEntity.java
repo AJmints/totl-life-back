@@ -2,6 +2,7 @@ package life.totl.totlback.backpack.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import life.totl.totlback.backpack.models.dtos.response.ItemRecDetailsEventResponseDTO;
 import life.totl.totlback.campevent.models.ItemRecEntity;
 
 import java.util.List;
@@ -190,6 +191,10 @@ public class GearItemsEntity {
         } else {
             return false;
         }
+    }
+
+    public ItemRecDetailsEventResponseDTO getItemRecDetail() {
+        return new ItemRecDetailsEventResponseDTO(this.id, this.category, this.model, this.type, this.extraInfo);
     }
 
     public void removeGearItemsEntity(UserSpecificGearEntity remove) { userLink.remove(remove); }

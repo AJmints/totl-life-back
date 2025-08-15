@@ -2,7 +2,6 @@ package life.totl.totlback.campevent.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import life.totl.totlback.backpack.models.BackPackEntity;
 import life.totl.totlback.backpack.models.GearItemsEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
