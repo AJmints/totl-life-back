@@ -14,6 +14,7 @@ public class EventItemRecDetailResponsDTO {
 
     private long id;
     private int count;
+    private String perGroupOrPerson;
     private ItemRecDetailsEventResponseDTO itemDetails;
 
 }

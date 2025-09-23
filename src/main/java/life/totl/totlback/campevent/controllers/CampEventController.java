@@ -223,7 +223,7 @@ public class CampEventController {
             List<EventItemRecDetailResponsDTO> gearRecList = new ArrayList<>();
             for (ItemRecEntity item : view.get().getGearRecItems()) {
                 ItemRecDetailsEventResponseDTO itemRecDetail = item.getGearRec().getItemRecDetail();
-                EventItemRecDetailResponsDTO itemRec = new EventItemRecDetailResponsDTO(item.getId(),item.getCount(), itemRecDetail);
+                EventItemRecDetailResponsDTO itemRec = new EventItemRecDetailResponsDTO(item.getId(),item.getCount(), item.getGroupType() ,itemRecDetail);
                 gearRecList.add(itemRec);
             }
             theEvent.setInviteList(inviteList);
